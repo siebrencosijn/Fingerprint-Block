@@ -1,1 +1,17 @@
+{
+    "manifest_version": 2,
+    "name": "FPBlock",
+    "version": "0.1",
+    "description": "Block browser fingerprinting",
+    "homepage_url": "https://github.com/siebrencosijn/Fingerprint-Block.git",
 
+    "permissions": [
+        "<all_urls>",
+        "webRequest",
+        "webRequestBlocking"
+    ],
+
+    "background": {
+        "scripts": ["background.js"]
+    }
+}
