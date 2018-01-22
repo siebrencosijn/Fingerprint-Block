@@ -7,6 +7,9 @@ var webidentity = {
     appVersion: "5.0 (Macintosh; Intel Mac OS X 10.9.8; rv:12.3) Gecko/20100101 Firefox/12.3.5"
 }
 
+/*
+Rewrite HTTP request headers with values from the web identity.
+*/
 function changeHttpHeaders(e) {
     for (var header of e.requestHeaders) {
         if (header.name.toLowerCase() === "user-agent") {
@@ -19,6 +22,9 @@ function changeHttpHeaders(e) {
     return {requestHeaders: e.requestHeaders};
 }
 
+/*
+Rewrite navigator getters to return values from the web identity.
+*/
 function changeJSAttributes(e) {
     browser.tabs.executeScript(e.tabId, {
         runAt: "document_start",
