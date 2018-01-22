@@ -1,23 +1,37 @@
-var useragent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36";
-var accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
-var acceptencoding = "gzip,deflate,sdch";
+"use strict";
 
-/*
-Change the user-agent, accept and accept-encoding HTTP headers.
-*/
+// test values
+var webidentity = {
+    userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9.8; rv:12.3) Gecko/20100101 Firefox/12.3.5",
+    acceptEncoding: "gzip, deflate",
+    appVersion: "5.0 (Macintosh; Intel Mac OS X 10.9.8; rv:12.3) Gecko/20100101 Firefox/12.3.5"
+}
+
 function changeHttpHeaders(e) {
     for (var header of e.requestHeaders) {
         if (header.name.toLowerCase() === "user-agent") {
-            header.value = useragent;
-        }
-        if (header.name.toLowerCase() === "accept") {
-            header.value = accept;
+            header.value = webidentity.userAgent;
         }
         if (header.name.toLowerCase() === "accept-encoding") {
-            header.value = acceptencoding;
+            header.value = webidentity.acceptEncoding;
         }
     }
     return {requestHeaders: e.requestHeaders};
+}
+
+function changeJSAttributes(e) {
+    browser.tabs.executeScript(e.tabId, {
+        runAt: "document_start",
+        allFrames: true,
+        code: `{
+            var script = document.createElement('script');
+            script.text = \`{
+                navigator.__defineGetter__("userAgent", () => "${webidentity.userAgent}");
+                navigator.__defineGetter__("appVersion", () => "${webidentity.appVersion}");
+            }\`;
+            document.documentElement.appendChild(script);
+        }`
+    });
 }
 
 /*
@@ -28,3 +42,8 @@ browser.webRequest.onBeforeSendHeaders.addListener(
     {urls: ["<all_urls>"]},
     ["blocking", "requestHeaders"]
 );
+
+/*
+Add changeJSAttributes as a listener to onCommited.
+*/
+browser.webNavigation.onCommitted.addListener(changeJSAttributes);
