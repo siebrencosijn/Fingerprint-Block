@@ -22,7 +22,7 @@
     "background": {
         "scripts": [
             "background.js", 
-            "backfround_button.js"
+            "background/button.js"
         ]
     }
 }
