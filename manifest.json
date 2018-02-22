@@ -15,9 +15,9 @@
     }
         
     "browser_action": {
-    "default_icon": "icons/icon.png",
-    "default_title": "FP-Block"
-    },
+        "default_icon": "icons/icon.png",
+        "default_title": "FP-Block"
+    }
     
     "background": {
         "scripts": [
