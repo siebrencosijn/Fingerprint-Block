@@ -10,13 +10,19 @@
         "webRequestBlocking",
         "webNavigation"
     ],
-    
+    "icons": {
+        "48": "icons/icon.png"
+    }
+        
     "browser_action": {
     "default_icon": "icons/icon.png",
     "default_title": "FP-Block"
     },
     
     "background": {
-        "scripts": ["background.js"]
+        "scripts": [
+            "background.js", 
+            "backfround_button.js"
+        ]
     }
 }
