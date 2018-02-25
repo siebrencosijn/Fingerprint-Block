@@ -4,24 +4,29 @@
     "version": "0.1",
     "description": "Block browser fingerprinting",
     "homepage_url": "https://github.com/siebrencosijn/Fingerprint-Block.git",
+
     "permissions": [
         "<all_urls>",
         "webRequest",
         "webRequestBlocking",
-        "webNavigation"
+        "webNavigation",
+        "storage"
     ],
+
     "icons": {
         "48": "icons/icon.png"
     },
-        
+
     "browser_action": {
+        "browser_style": true,
         "default_icon": "icons/icon.png",
         "default_title": "FP-Block"
     },
-    
+
     "background": {
         "scripts": [
-            "background.js", 
+            "background/webidentities.js",
+            "background/background.js",
             "background/button.js"
         ]
     }
