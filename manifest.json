@@ -25,9 +25,9 @@
 
     "background": {
         "scripts": [
-            "background/webidentities.js",
-            "background/background.js",
-            "background/button.js"
+            "background/modules/webidentities.js",
+            "background/button.js",
+            "background/background.js"
         ]
     }
 }
