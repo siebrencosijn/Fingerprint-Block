@@ -10,7 +10,8 @@ browser.webRequest.onBeforeSendHeaders.addListener(
 
 // Rewrite navigator getters to return values from the web identity.
 function changeJSAttributes(e) {
-    var webidentity = fetchWebIdentity(e.url);
+    var domain = (new URL(e.url)).hostname;
+    var webidentity = webidentities.fetchWebIdentity(domain);
     browser.tabs.executeScript(e.tabId, {
         runAt: "document_start",
         allFrames: true,
