@@ -25,7 +25,9 @@
 
     "background": {
         "scripts": [
+            "background/modules/randomFingerprintGenerator.js",
             "background/modules/webidentities.js",
+            "background/modules/requestListener.js",
             "background/button.js",
             "background/background.js"
         ]
