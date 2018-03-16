@@ -2,8 +2,8 @@ var webidentities = (function () {
     var webidentities = [];
 
     /*
-    Load web identities from browser local storage.
-    */
+     * Load web identities from browser local storage.
+     */
     var loadWebIdentities = function() {
         browser.storage.local.get("webidentities").then(function(result) {
             if (Object.getOwnPropertyNames(result).length != 0) {
@@ -13,50 +13,46 @@ var webidentities = (function () {
     };
 
     /*
-    Save web identities to browser local storage.
-    */
+     * Save web identities to browser local storage.
+     */
     var saveWebIdentities = function() {
         browser.storage.local.set({"webidentities": webidentities});
     };
 
     /*
-    Clear all web identities saved in browser local storage.
-    */
+     * Clear all web identities saved in browser local storage.
+     */
     var clearWebIdentities = function() {
         browser.storage.local.remove("webidentities");
     };
 
     /*
-    Return all web identities.
-    */
+     * Return all web identities.
+     */
     var getWebIdentities = function() {
         return webidentities;
     };
 
     /*
-    Return the web identity for the given domain or null if no web identity is found.
-    */
-    var getWebIdentity = function(domain) {
+     * Return (or create) the web identity for the given domain.
+     */
+    var fetchWebIdentity = function(domain) {
+        var webidentity;
         for (var i = 0; i < webidentities.length; i++) {
-            var webidentity = webidentities[i];
+            webidentity = webidentities[i];
             if (webidentity.domain === domain) {
                 return webidentity;
             }
         }
-        return null;
-    };
-
-    /*
-    Add a web identity to the array of web identities.
-    */
-    var addWebIdentity = function(webidentity) {
+        webidentity = {domain: domain};
+        webidentity.values = randomFingerprintGenerator.generate();
         webidentities.push(webidentity);
-        saveWebIdentities();
+        return webidentity;
     };
 
     /*
-    Remove the web identity for the given domain from the array of web identities.
-    */
+     * Remove the web identity for the given domain from the array of web identities.
+     */
     var removeWebIdentity = function(domain) {
         for (var i = 0; i < webidentities.length; i++) {
             var webidentity = webidentities[i];
@@ -65,14 +61,14 @@ var webidentities = (function () {
                 return;
             }
         }
-    }
+    };
 
     return {
         loadWebIdentities: loadWebIdentities,
+        saveWebIdentities: saveWebIdentities,
         clearWebIdentities: clearWebIdentities,
         getWebIdentities: getWebIdentities,
-        getWebIdentity: getWebIdentity,
-        addWebIdentity: addWebIdentity,
+        fetchWebIdentity: fetchWebIdentity,
         removeWebIdentity: removeWebIdentity
-    }
+    };
 })();
