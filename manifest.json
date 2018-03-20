@@ -19,7 +19,7 @@
 
     "browser_action": {
         "browser_style": true,
-        "default_icon": "icons/icon.png",
+        "default_icon": "icons/logo.png",
         "default_title": "FP-Block"
     },
 
@@ -28,7 +28,7 @@
             "background/modules/randomFingerprintGenerator.js",
             "background/modules/webidentities.js",
             "background/modules/requestListener.js",
-            "background/button.js",
+            "interface/button.js",
             "background/background.js"
         ]
     }
