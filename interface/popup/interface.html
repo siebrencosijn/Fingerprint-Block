@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="skin.css"/>
+    </head>
+    <body>
+        <div id="fingerprintprivacy-popup">
+            <table>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td>
+                                    <div id="title">FingerPrint-Block</div>
+                                </td>
+			                    <td rowspan="2" id="private-browsing">
+			            	    </td>
+			                    <td rowspan="2">
+                                    <image src='/icons/settings.png' title="Settings" id="settings" onclick=";"/> <!-- TODO: to open new window with settings -->
+			                    </td>
+			                </tr>
+			                <tr>
+                                <td>
+			            	        <div id="domain"> </div>
+			                    </td>
+			                </tr>
+			            </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+	                    <div id="social-plugins">
+                	        <div class="caption">Social Plugins</div>
+                	        <div id="social-plugins-table">
+                   	        </div>
+    			        </div>
+    		        </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="summary">
+                	        <div class="caption">Summary</div>
+    				        <div id="summary-list">
+    					        <table>
+							        <tr class="summary-list-item" onclick=";" alt="Click to view requested attributes"> <!-- TODO: to add toggleAttributes-->
+								        <td class="summary-list-item-label">Requested attributes:</td>
+								        <td class="summary-list-item-number" id="detected-attributes"></td>
+								        <td><image src="/icons/collapsed.png" id="arrow-attributes"/></td>
+							        </tr>
+						            <tr>
+							            <td colspan="3">
+                                            <div id="attribute-list"></div>
+			    				            <div class="attribute">
+				    				            <table style="width: 100%; table-layout: fixed; word-wrap: break-word;">
+				    					            <tr>
+											            <td style="width: 30px;">
+			    								            <input type="checkbox" class="attribute-checkbox"/>
+											            </td>
+				    						            <td>
+												            <div class="attribute-label"></div>
+											            </td>
+										            </tr>
+									            </table>
+				    			            </div>
+				    		            </td>
+				    	            </tr>
+						            <tr class="summary-list-item" onclick=";" alt="Click to view third-parties"> <!-- TODO: toggleThirdParties -->
+							            <td class="summary-list-item-label">Third-parties:</td>
+							            <td class="summary-list-item-number" id="detected-third-parties"></td>
+							            <td><image src="/icons/collapsed.png" id="arrow-third-parties"/></td>
+						            </tr>
+						            <tr>
+							            <td colspan="3">
+								            <div id="third-parties-list"></div>
+			    			                <div class="third-party">
+				    				            <table style="width: 100%; table-layout: fixed; word-wrap: break-word;">
+				    					            <tr>
+											            <td style="width: 30px;">
+			    								            <input type="checkbox" class="third-party-checkbox"/>
+                                                        </td>
+                                                        <td>
+                                                            <div class="third-party-label"></div>
+                                                        </td>
+                                                    </tr>
+									            </table>
+				    		                </div>
+				    	                </td>
+			    	                </tr>
+					            </table>
+				            </div>
+    	                </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="browser-plugins">
+                            <div class="caption">Browser Plugins</div>
+    		                <div id="browser-plugins-table">
+                            </div>
+			            </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+	                    <div id="website-switch">
+                            <div class="onoffswitch">
+	                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="websiteonoffswitch" /> <!-- TODO: add toggleWebsite-->
+						        <label class="onoffswitch-label" for="websiteonoffswitch">
+							        <div class="onoffswitch-inner"></div>
+						            <div class="onoffswitch-switch"></div>
+						        </label>
+					        </div>
+	                    </div>
+    		        </td>
+                </tr>
+                <tr>
+                    <td>
+	                    <div id="domain-error"> </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
