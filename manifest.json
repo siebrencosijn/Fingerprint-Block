@@ -14,22 +14,22 @@
     ],
 
     "icons": {
-        "48": "icons/icon.png"
+        "48": "interface/icons/icon.png"
     },
 
     "browser_action": {
         "browser_style": true,
-        "default_icon": "icons/logo.png",
+        "default_icon": "interface/icons/logo.png",
         "default_title": "FP-Block"
     },
 
     "background": {
         "scripts": [
-            "background/modules/randomFingerprintGenerator.js",
-            "background/modules/webidentities.js",
-            "background/modules/requestListener.js",
-            "interface/button.js",
-            "background/background.js"
+            "src/modules/randomFingerprintGenerator.js",
+            "src/modules/webidentities.js",
+            "src/modules/requestListener.js",
+            "src/background.js",
+            "interface/button.js"
         ]
     }
 }

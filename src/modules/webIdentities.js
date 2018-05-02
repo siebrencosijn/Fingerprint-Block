@@ -1,4 +1,4 @@
-var webidentities = (function () {
+var webIdentities = (function () {
     var webidentities = [];
 
     /*
