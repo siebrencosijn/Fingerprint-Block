@@ -1,11 +1,12 @@
-function random(a, b) {
+// TODO: bron toevoegen
+export default function random(a, b) {
     // calling random() with no arguments is identical to random(0, 100)
     a = a || 0;
     b = b || 100;
 
     if (typeof b === 'number' && typeof a === 'number') {
         //random(int min, int max) returns an integer between min, max
-        return (function (min, max)) {
+        return (function(min, max) {
             if (min > max) {
                 throw new RangeError('expect min <= max; got min = ' + min + ', max = ' + max);
             }
@@ -20,7 +21,7 @@ function random(a, b) {
 
     if (a && typeof a === 'object') {
         // returns a random key from the passed object; keys are weighted by the decimal probability in their value
-        return (function (obj) {
+        return (function(obj) {
             var rand = random(0, 100) / 100,
                 min = 0,
                 max = 0,

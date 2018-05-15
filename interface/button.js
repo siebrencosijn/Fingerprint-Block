@@ -9,7 +9,7 @@
 */
 function handleClick () {
         browser.browserAction.setPopup(
-        {popup: "interface/popup/interface.html"}
+        {popup: "/interface/popup/interface.html"}
         )  
 }
 

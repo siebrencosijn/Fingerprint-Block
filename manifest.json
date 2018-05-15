@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "FPBlock",
     "version": "0.1",
-    "description": "Block browser fingerprinting",
+    "description": "Preventing browser fingerprinting",
     "homepage_url": "https://github.com/siebrencosijn/Fingerprint-Block.git",
 
     "permissions": [
@@ -24,12 +24,6 @@
     },
 
     "background": {
-        "scripts": [
-            "src/modules/randomFingerprintGenerator.js",
-            "src/modules/webidentities.js",
-            "src/modules/requestListener.js",
-            "src/background.js",
-            "interface/button.js"
-        ]
+        "page": "src/background.html"
     }
 }
