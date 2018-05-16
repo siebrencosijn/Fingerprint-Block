@@ -11,6 +11,19 @@ browser.webRequest.onBeforeSendHeaders.addListener(
     ["blocking", "requestHeaders"]
 );
 
+// Change the Referrer-Policy of HTTP responses
+browser.webRequest.onHeadersReceived.addListener(e => {
+    const NAME = "Referrer-Policy";
+    const VALUE = "same-origin";
+    let header = e.responseHeaders.find(h => h.name.toLowerCase() === NAME.toLowerCase());
+    if (header !== undefined) {
+        header.value = VALUE;
+    } else {
+        e.responseHeaders.push({name: NAME, value: VALUE});
+    }
+    return {responseHeaders: e.responseHeaders};
+}, {urls: ["<all_urls>"]}, ["blocking", "responseHeaders"]);
+
 // Rewrite navigator getters to return values from the web identity.
 //function changeJSAttributes(e) {
 //    var domain = (new URL(e.url)).hostname;
