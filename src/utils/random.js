@@ -1,5 +1,19 @@
-// TODO: bron toevoegen
-export default function random(a, b) {
+/*
+   This random fingerprint generator is based on Jeffrey Mealo random user-agent
+   generator version 0.0.6 which is under the MIT license.
+   Author: Jeffrey Mealo
+   E-mail: jeffreymealo@gmail.com
+   Web   : http://www.jeffreymealo.com
+   URL   : https://github.com/jmealo/random-ua.js.git
+*/
+
+/*
+   This generator was updated to generate random fingerprints based on a particular random profile.
+   Author: Christof Ferreira Torres
+   E-mail: christof.ferreira.001@student.uni.lu
+*/
+
+export function random(a, b) {
     // calling random() with no arguments is identical to random(0, 100)
     a = a || 0;
     b = b || 100;
@@ -27,6 +41,7 @@ export default function random(a, b) {
                 max = 0,
                 key,
                 return_val;
+
             for (key in obj) {
                 if (obj.hasOwnProperty(key)) {
                     max = obj[key] + min;
@@ -37,6 +52,8 @@ export default function random(a, b) {
                     min = min + obj[key];
                 }
             }
+
+            return return_val;
         }(a));
     }
 
