@@ -1,17 +1,13 @@
 import webIdentities from './webIdentities.js';
 
 export default function requestListener(e) {
-    let domain = (new URL(e.url)).hostname;
-    let webidentity = webIdentities.getWebIdentity(domain);
-
+    let origin = hostname(e.originUrl);
+    let target = hostname(e.url);
+    let webidentity = webIdentities.getWebIdentity(origin);
     // TODO: Set web identity usage amount and date
-
     changeRequestHeaders(e.requestHeaders, webidentity);
-
     // TODO: Get third-parties; Add target domain to third-parties; Block third-parties
-
     // TODO: Block social plugins
-
     return {requestHeaders: e.requestHeaders};
 }
 
@@ -45,4 +41,11 @@ function blockThirdParties() {
 
 function blockSocialPlugins() {
     // TODO
+}
+
+/*
+ * Returns the hostname for a url.
+ */
+function hostname(url) {
+    return (new URL(url)).hostname;
 }
