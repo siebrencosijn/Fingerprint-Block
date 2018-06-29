@@ -13,7 +13,7 @@
    E-mail: christof.ferreira.001@student.uni.lu
 */
 
-export function random(a, b) {
+export default function random(a, b) {
     // calling random() with no arguments is identical to random(0, 100)
     a = a || 0;
     b = b || 100;
