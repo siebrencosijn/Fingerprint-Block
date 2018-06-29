@@ -26,5 +26,10 @@
 
     "background": {
         "page": "src/background.html"
+    },
+
+    "options_ui": {
+        "page": "interface/options/options.html",
+        "open_in_tab": true
     }
 }
