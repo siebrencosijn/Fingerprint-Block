@@ -1,4 +1,5 @@
 import randomFingerprintGenerator from './randomFingerprintGenerator.js';
+import WebIdentity from '../classes/WebIdentity.js';
 
 let webIdentities = {
     webidentities : [],
@@ -39,18 +40,13 @@ let webIdentities = {
      * Return the web identity for the given domain or creates a new web identity if not found.
      */
     getWebIdentity(domain) {
-        let webidentity;
         for (let i = 0; i < this.webidentities.length; i++) {
-            webidentity = this.webidentities[i];
-            if (webidentity.domain == domain) {
+            let webidentity = this.webidentities[i];
+            if (webidentity.domain === domain) {
                 return webidentity;
             }
         }
-        webidentity = {
-            values: randomFingerprintGenerator.generate(),
-            domain: domain
-        };
-        return webidentity;
+        return new WebIdentity(domain, randomFingerprintGenerator.generate());
     },
 
     /*
