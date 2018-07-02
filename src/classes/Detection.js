@@ -27,7 +27,7 @@ export default Detection;
 * Gets the index of the attribute with the given name from array of attributes.
 * in the array of detections.
 */
-getIndexOfAttribute(name) {
+function getIndexOfAttribute(name) {
     for(var i = 0; i < this.attributes.length; i++) {
         if(this.attributes[i].name.indexOf(name) != -1) {
             return i;

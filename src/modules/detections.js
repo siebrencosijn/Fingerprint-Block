@@ -109,7 +109,7 @@ export default detections;
 * Gets the index of the detection for the given url 
 * in the array of detections.
 */
-getIndexOfDetection(url) {
+function getIndexOfDetection(url) {
     for (var i = 0; i < this.detections.length; i++) {
         if(this.detections[i].url.indexOf(url) = -1) {
             return i;
