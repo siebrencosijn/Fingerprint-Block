@@ -4,7 +4,6 @@
 /* Date: 16.09.2014                                             */ 
 /* Update: 27.06.2018                                           */
 /****************************************************************/
-import Detection from '../classes/Detection.js';
 
 let detections = {
     detections : [],
@@ -50,10 +49,13 @@ let detections = {
 
     /**
      * Adds a detection to the array of detections.
-     * @param {*} detection
+     * @param {*} url 
+     * @param {*} attributes 
+     * @param {*} notified 
+     * @param {*} canvas 
      */
-    addDetection(detection) {
-        this.detections.push(detection);
+    addDetection(url, attributes, notified, canvas) {
+        this.detections.push({url : url, attributes : attributes, notified : notified, canvas : canvas});
     },
     
     /**
@@ -75,8 +77,9 @@ let detections = {
     getAttribute(url, name) {
         var attribute = null;
         var indexOfDetection = this.getIndexOfDetection(url);
-        if(indexOfDetection != -1) { 
-            attribute = this.detections[indexOfDetection].getAttribute(name);
+        var indexOfAttribute = this.getIndexOfAttribute(indexOfDetection, name);
+        if (indexOfAttribute != -1) {
+            attribute = this.detections[indexOfDetection].attributes[indexOfAttribute];
         }
         return attribute;
     },
@@ -100,20 +103,35 @@ let detections = {
      */
     getAllDetections() {
         return this.detections;
-    }
-}
-export default detections;
+    },
 
-// Hulp functions
-/*
-* Gets the index of the detection for the given url 
-* in the array of detections.
-*/
-getIndexOfDetection(url) {
-    for (var i = 0; i < this.detections.length; i++) {
-        if(this.detections[i].url.indexOf(url) = -1) {
-            return i;
+    // Hulp functions
+    /*
+    * Gets the index of the detection for the given url 
+    * in the array of detections.
+    */
+    getIndexOfDetection(url) {
+        for (var i = 0; i < this.detections.length; i++) {
+            if(this.detections[i].url.indexOf(url) = -1) {
+                return i;
+            }
         }
+        return -1;
+    },
+
+    /* 
+    * Gets the index of the attribute with the given name 
+    * for the detection with the given index
+    * in the array of detections.
+    */
+    getIndexOfAttribute(indexOfDetection, name) {
+        for(var i = 0; i < this.detections[indexOfDetection].attributes.length; i++) {
+            if(this.detections[indexOfDetection].attributes[i] != -1) {
+                return i;
+            }
+        }
+        return -1;
     }
-    return -1;
 }
+
+export default detections;
