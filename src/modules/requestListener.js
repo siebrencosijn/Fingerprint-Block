@@ -1,8 +1,9 @@
 import webIdentities from './webIdentities.js';
+import { getHostname } from '../utils/utils.js';
 
 export default function requestListener(e) {
-    let origin = hostname(e.originUrl);
-    let target = hostname(e.url);
+    let origin = getHostname(e.originUrl);
+    let target = getHostname(e.url);
     let webidentity = webIdentities.getWebIdentity(origin);
     webidentity.incrementUsage();
     changeRequestHeaders(e.requestHeaders, webidentity);
@@ -42,11 +43,4 @@ function blockThirdParties() {
 
 function blockSocialPlugins() {
     // TODO
-}
-
-/*
- * Returns the hostname for a url.
- */
-function hostname(url) {
-    return (new URL(url)).hostname;
 }
