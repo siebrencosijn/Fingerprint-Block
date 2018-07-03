@@ -1,37 +1,42 @@
 class Detection {
-    constructor(url, attributes, notified, canvas) {
-        this.url = url;
+
+    constructor(domain, attributes, notified, canvas) {
+        this.domain = domain;
         this.attributes = attributes;
         this.notified = notified;
         this.canvas = canvas;
     }
 
     /**
-     * Gets attribute with the given name from array of attributes.
+     * Gets attribute with a name from array of attributes.
      * @param {*} name
      */
     getAttribute(name) {
-        var attribute = null;
-        var indexOfAttribute = getIndexOfAttribute(name);
-        if (indexOfAttribute != -1) {
-             attribute = this.detections[indexOfDetection].attributes[indexOfAttribute];
+        return this.attributes.find(
+            h => h.name.toLowerCase() === name.toLowerCase()
+        );
+    }
+
+    /**
+     * Returns the index of the attribute with a name.
+     * @param {*} name 
+     */
+    getAttributeIndex(name) {
+        return this.attributes.findIndex(
+                h => h.name.toLowerCase() === name.toLowerCase()
+                );
+    }
+    
+    /**
+     * Removes the attribute with a name from the array of attributes. 
+     * @param {*} name 
+     */
+    removeAttribute(name) {
+        var index = this.getAttributeIndex(name);
+        if(index !== -1) {
+            this.attributes.splice(index, 1);
         }
-        return attribute;
     }
 
 }
 export default Detection;
-
-// Hulp functions
-/*
-* Gets the index of the attribute with the given name from array of attributes.
-* in the array of detections.
-*/
-function getIndexOfAttribute(name) {
-    for(var i = 0; i < this.attributes.length; i++) {
-        if(this.attributes[i].name.indexOf(name) != -1) {
-            return i;
-        }
-    }
-    return -1;
-}

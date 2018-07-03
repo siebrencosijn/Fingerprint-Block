@@ -1,5 +1,6 @@
 import webIdentities from './modules/webIdentities.js';
 import requestListener from './modules/requestListener.js';
+import responseListener from './modules/responseListener.js';
 
 // Load web identities
 webIdentities.loadWebIdentities();
@@ -23,6 +24,13 @@ browser.webRequest.onHeadersReceived.addListener(e => {
     }
     return {responseHeaders: e.responseHeaders};
 }, {urls: ["<all_urls>"]}, ["blocking", "responseHeaders"]);
+
+// Adds responseListener to onBeforeRequest
+browser.webRequest.onHeadersReceived.addListener(
+    responseListener,
+    {urls: ["<all_urls>"]},
+    ["blocking","responseHeaders"]
+);
 
 // Rewrite navigator getters to return values from the web identity.
 //function changeJSAttributes(e) {

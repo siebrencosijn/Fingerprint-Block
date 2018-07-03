@@ -1,30 +1,30 @@
 /****************************************************************/
 /* -- Fingerprint Privacy --                                    */
 /* Author: Christof Ferreira Torres                             */
-/* Date: 16.09.2014                                             */ 
+/* Date: 16.09.2014                                             */
 /* Update: 27.06.2018                                           */
 /****************************************************************/
 import Detection from '../classes/Detection.js';
 
 let detections = {
-    detections : [],
+    detections: [],
 
     /**
      * Load detections from browser local storage. 
      */
     loadDetections() {
-        browser.storage.local.get("detections").then(function(result) {
+        browser.storage.local.get("detections").then(function (result) {
             if (Object.getOwnPropertyNames(result).length != 0) {
                 this.detections = result;
             }
         });
     },
-    
+
     /**
      * Save detections to browser local storage.
      */
     saveDetections() {
-       browser.storage.local.set({"detections" : this.detections}); 
+        browser.storage.local.set({ "detections": this.detections });
     },
 
     /**
@@ -36,16 +36,26 @@ let detections = {
 
 
     /**
-     * Gets the detection for the given url.
-     * @param {*} url 
+     * Gets the detection for a domain.
+     * If the detection for a domain does not exist, it returns 'undefined'.
+     * @param {*} domain
+     * @returns detection 
      */
-    getDetection(url){
-        var detection = null;
-        var index = this.getIndexOfDetection(url);
-        if (index != -1) {
-            detection = this.detections[index]; 
-        }
-        return detection;
+    getDetection(domain) {
+        return this.detections.find(
+            h => h.domain.toLowerCase() === domain.toLowerCase()
+        );
+    },
+
+    /**
+     * Retunrs the index of the detection for a domain.
+     * If the detection for a domain does not exist, it returns -1.
+     * @param {*} domain 
+     */
+    getDetectionIndex(domain) {
+        return detections.findIndex(
+            h => h.domain.toLowerCase() === domain.toLowerCase()
+        );
     },
 
     /**
@@ -55,65 +65,52 @@ let detections = {
     addDetection(detection) {
         this.detections.push(detection);
     },
-    
+
     /**
-     * Removes detection for the given domain from the array of detections.
-     * @param {*} url 
+     * Removes detection for a domain from the array of detections.
+     * @param {*} domain 
      */
-    deleteDetection(url) {
-        var index = getIndexOfDetection(url);
+    deleteDetection(domain) {
+        let index = this.getDetectionIndex(domain);
         if (index != -1) {
-            this.detections.slice(index,1);
+            this.detections.slice(index, 1);
         }
     },
 
     /**
-     * Gets an attribute with the given name of the detection for the given url.
-     * @param {*} url 
-     * @param {*} name 
+     * Gets an attribute with a name of the detection for a domain.
+     * If the detection for a domain does not exist, it returns 'undefined'.
+     * @param {*} domain 
+     * @param {*} name
+     * @returns attribute
      */
-    getAttribute(url, name) {
-        var attribute = null;
-        var indexOfDetection = this.getIndexOfDetection(url);
-        if(indexOfDetection != -1) { 
-            attribute = this.detections[indexOfDetection].getAttribute(name);
+    getAttribute(domain, name) {
+        let detection = this.getDetection(domain);
+        if(detection) {
+            return detection.getAttribute(name);
         }
-        return attribute;
+        return undefined;
     },
 
     /**
-     * Removes the attribule with the given name from the detection 
-     * with the given url from the array of detections.
-     * @param {*} url 
+     * Removes the attribule with a name from the detection 
+     * with a domain from the array of detections.
+     * @param {*} domain 
      * @param {*} name 
      */
-    deleteAttribute(url, name) {
-        var indexOfDetection = this.getIndexOfDetection(url);
-        var indexOfAttribute = this.getIndexOfAttribute(indexOfDetection, name);
-        if (indexOfAttribute != -1) {
-            this.detections[indexOfDetection].attributes.splice(indexOfAttribute, 1);
+    deleteAttribute(domain, name) {
+        let detection = this.getDetection(domain);
+        if(detection) {
+            detection.removeAttribute(name);
         }
     },
 
     /**
      * Gets all detections.
+     * @returns all detections
      */
     getAllDetections() {
         return this.detections;
     }
 }
 export default detections;
-
-// Hulp functions
-/*
-* Gets the index of the detection for the given url 
-* in the array of detections.
-*/
-function getIndexOfDetection(url) {
-    for (var i = 0; i < this.detections.length; i++) {
-        if(this.detections[i].url.indexOf(url) = -1) {
-            return i;
-        }
-    }
-    return -1;
-}
