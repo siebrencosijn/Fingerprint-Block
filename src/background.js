@@ -1,6 +1,7 @@
 import webIdentities from './modules/webIdentities.js';
 import requestListener from './modules/requestListener.js';
 import responseListener from './modules/responseListener.js';
+import detectionListener from './modules/detectionListener.js';
 
 // Load web identities
 webIdentities.loadWebIdentities();
@@ -31,6 +32,9 @@ browser.webRequest.onHeadersReceived.addListener(
     {urls: ["<all_urls>"]},
     ["blocking","responseHeaders"]
 );
+
+// Adds the communication with content script
+browser.runtime.onMessage.addListener(detectionListener);
 
 // Rewrite navigator getters to return values from the web identity.
 //function changeJSAttributes(e) {

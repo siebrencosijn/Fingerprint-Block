@@ -7,7 +7,10 @@ class Fingerprint {
         this.screen = screen;
         this.date = date;
         this.hash = this._generateHash();
+        this.domObjects = [this.navigator, this.screen, this.date];
     }
+
+    
 
     _generateHash() {
         /*
@@ -39,6 +42,16 @@ class Fingerprint {
                      this.navigator.userLanguage;
         // Return the two hashes for Group 0 and Group 1 until Group 4
         return murmurhash3_32_gc(group1 + "###" + group2 + "###" + group3 + "###" + group4, 31);
+    }
+
+    getPropertyValue(name) {
+        for(var i = 0; i < this.domObjects.length; i++) {
+            var domObject = this.domObjects[i];
+            if(name in domObject) {
+                return domObject[name];
+            }
+        }
+        return undefined;
     }
 }
 export default Fingerprint;

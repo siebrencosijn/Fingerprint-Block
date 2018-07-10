@@ -1,11 +1,15 @@
 class Detection {
-
+      
     constructor(domain, attributes, notified, canvas) {
         this.domain = domain;
         this.attributes = attributes;
         this.notified = notified;
         this.canvas = canvas;
     }
+
+    addAttribute(attribute) {
+        this.attributes.push(attribute);
+    } 
 
     /**
      * Gets attribute with a name from array of attributes.
@@ -32,7 +36,7 @@ class Detection {
      * @param {*} name 
      */
     removeAttribute(name) {
-        var index = this.getAttributeIndex(name);
+        let index = this.getAttributeIndex(name);
         if(index !== -1) {
             this.attributes.splice(index, 1);
         }

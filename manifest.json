@@ -11,7 +11,8 @@
         "webRequestBlocking",
         "webNavigation",
         "tabs",
-        "storage"
+        "storage",
+        "notifications"
     ],
 
     "icons": {
@@ -31,5 +32,12 @@
     "options_ui": {
         "page": "interface/options/options.html",
         "open_in_tab": true
-    }
+    },
+
+    "content_scripts": [
+        {
+          "matches": ["<all_urls>"],
+          "js": ["src/content.js"]
+        }
+      ]
 }
