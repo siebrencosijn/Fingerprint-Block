@@ -4,6 +4,7 @@
 /* Date: 2.07.2018                          */
 /********************************************/
 import injectedScript from './injectedScript.js';
+import { getHostname } from '../utils/utils.js';
 
 const CONTENT_TYPE = "Content-Type",
       TEXT_HTML = "text/html",
@@ -68,11 +69,4 @@ function getResponseHeader(details, headername) {
     return details.responseHeaders.find(
         h => h.name.toLowerCase() === headername.toLowerCase()
     );
-}
-
-/*
- * Returns the hostname for a url.
- */
-function getHostname(url) {
-    return (new URL(url)).hostname;
 }
