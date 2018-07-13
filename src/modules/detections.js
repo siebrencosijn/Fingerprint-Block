@@ -36,7 +36,7 @@ let detections = {
 
     /**
      * Gets the detection for a domain.
-     * If the detection for a domain does not exist, create a new detection.
+     * If the detection for a domain does not exist, returns 'undefined'.
      * @param {*} domain
      * @returns detection 
      */
