@@ -4,6 +4,7 @@
 /* Date: 16.09.2014                                             */
 /* Update: 27.06.2018                                           */
 /****************************************************************/
+import Detection from '../classes/Detection.js';
 
 let detections = {
     detections: [],
@@ -33,10 +34,9 @@ let detections = {
         this.detections = [];
     },
 
-
     /**
      * Gets the detection for a domain.
-     * If the detection for a domain does not exist, it returns 'undefined'.
+     * If the detection for a domain does not exist, create a new detection.
      * @param {*} domain
      * @returns detection 
      */
@@ -47,12 +47,12 @@ let detections = {
     },
 
     /**
-     * Retunrs the index of the detection for a domain.
+     * Returns the index of the detection for a domain.
      * If the detection for a domain does not exist, it returns -1.
      * @param {*} domain 
      */
     getDetectionIndex(domain) {
-        return detections.findIndex(
+        return this.detections.findIndex(
             h => h.domain.toLowerCase() === domain.toLowerCase()
         );
     },

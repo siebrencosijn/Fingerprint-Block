@@ -1,5 +1,4 @@
 class Detection {
-      
     constructor(domain, attributes, notified, canvas) {
         this.domain = domain;
         this.attributes = attributes;
@@ -27,8 +26,8 @@ class Detection {
      */
     getAttributeIndex(name) {
         return this.attributes.findIndex(
-                h => h.name.toLowerCase() === name.toLowerCase()
-                );
+            h => h.name.toLowerCase() === name.toLowerCase()
+        );
     }
     
     /**
@@ -41,6 +40,5 @@ class Detection {
             this.attributes.splice(index, 1);
         }
     }
-
 }
 export default Detection;

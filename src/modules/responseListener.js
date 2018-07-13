@@ -17,14 +17,13 @@ export default function responseListener(details) {
         let encoder = new TextEncoder();
         filter.ondata = event => {
             let str = decoder.decode(event.data, { stream: true });
-            var script = "\r\n<meta charset=\"utf-8\">" + injectedScript( getHostname(details.url));
+            var script = "\r\n<meta charset='utf-8'>" + injectedScript(getHostname(details.url));
             var pattern = /(<head[^>]*>)/i;
             str = str.replace(pattern, "$1" + script)
             filter.write(encoder.encode(str));
             filter.disconnect();
         }
     }
-    return {};
 }
 
 /*

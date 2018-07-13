@@ -40,13 +40,16 @@ let webIdentities = {
      * Return the web identity for the given domain or creates a new web identity if not found.
      */
     getWebIdentity(domain) {
+        let webidentity;
         for (let i = 0; i < this.webidentities.length; i++) {
-            let webidentity = this.webidentities[i];
+            webidentity = this.webidentities[i];
             if (webidentity.domain === domain) {
                 return webidentity;
             }
         }
-        return new WebIdentity(domain, randomFingerprintGenerator.generate());
+        webidentity = new WebIdentity(domain, randomFingerprintGenerator.generate());
+        this.addWebIdentity(webidentity);
+        return webidentity;
     },
 
     /*

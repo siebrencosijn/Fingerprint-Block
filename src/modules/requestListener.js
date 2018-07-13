@@ -2,8 +2,8 @@ import webIdentities from './webIdentities.js';
 import { getHostname } from '../utils/utils.js';
 
 export default function requestListener(e) {
-    let origin = getHostname(e.originUrl);
     let target = getHostname(e.url);
+    let origin = e.originUrl == null ? target : getHostname(e.originUrl);
     let webidentity = webIdentities.getWebIdentity(origin);
     webidentity.incrementUsage();
     changeRequestHeaders(e.requestHeaders, webidentity);
