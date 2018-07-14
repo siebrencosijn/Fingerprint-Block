@@ -1,9 +1,9 @@
 class Detection {
-    constructor(domain, attributes, notified, canvas) {
+    constructor(domain, canvas, notified) {
         this.domain = domain;
-        this.attributes = attributes;
-        this.notified = notified;
         this.canvas = canvas;
+        this.notified = notified;
+        this.attributes = [];
     }
 
     addAttribute(attribute) {
@@ -39,6 +39,15 @@ class Detection {
         if(index !== -1) {
             this.attributes.splice(index, 1);
         }
+    }
+
+    /**
+     * Returns true if the array of attributes contains an attribute
+     * with given name, false otherwise
+     * @param {*} name
+     */
+    containsAttribute(name) {
+        return this.getAttributeIndex(name) !== -1;
     }
 }
 export default Detection;
