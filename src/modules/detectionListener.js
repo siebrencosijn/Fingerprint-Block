@@ -1,7 +1,6 @@
 import detections from "./detections.js";
 import Detection from "../classes/Detection.js";
 import Attribute from "../classes/Attribute.js";
-import { SPOOF_ATTRIBUTES } from "../utils/constants.js";
 
 /********************************************/
 /* -- Fingerprint Privacy --                */
