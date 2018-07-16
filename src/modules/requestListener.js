@@ -1,14 +1,17 @@
 import webIdentities from './webIdentities.js';
+import options from './options.js';
 import { getHostname } from '../utils/utils.js';
 
 export default function requestListener(e) {
+    if (blockSocialPlugin(e.url)) {
+        return {cancel: true};
+    }
     let target = getHostname(e.url);
-    let origin = e.originUrl == null ? target : getHostname(e.originUrl);
-    let webidentity = webIdentities.getWebIdentity(origin);
+    let domain = e.originUrl == null ? target : getHostname(e.originUrl);
+    let webidentity = webIdentities.getWebIdentity(domain);
     webidentity.incrementUsage();
     changeRequestHeaders(e.requestHeaders, webidentity);
     // TODO: Get third-parties; Add target domain to third-parties; Block third-parties
-    // TODO: Block social plugins
     return {requestHeaders: e.requestHeaders};
 }
 
@@ -29,18 +32,13 @@ function changeRequestHeaders(headers, webidentity) {
             header.value = http.acceptLanguage;
         }
         // Remove ETag headers
-        //if (name === "if-match" || name === "if-none-match" || name === "if-range") {
-            //console.log(name + ": " + header.value);
-            //header.value = "";
-            //console.log(name + ": " + header.value);
-        //}
+        if (name === "if-match" || name === "if-none-match" || name === "if-range") {
+            header.value = "";
+        }
     }
 }
 
-function blockThirdParties() {
+function blockSocialPlugin(url) {
     // TODO
-}
-
-function blockSocialPlugins() {
-    // TODO
+    return false;
 }

@@ -6,7 +6,7 @@
 
 import webIdentities from './webIdentities.js';
 import detections from './detections.js';
-import { DOMOBJECTS, SPOOF_ATTRIBUTES } from '../utils/constants.js';
+import { DOM_OBJECTS, SPOOF_ATTRIBUTES } from '../utils/constants.js';
 
 export default function injectedScript(domain) {
     let fingerprint = webIdentities.getWebIdentity(domain).fingerprint;
@@ -25,8 +25,8 @@ export default function injectedScript(domain) {
 
 function createScript(domain, detection, fingerprint) {
     let script = "";
-    for (let domObjectKey in DOMOBJECTS) {
-        let domObject = DOMOBJECTS[domObjectKey];
+    for (let domObjectKey in DOM_OBJECTS) {
+        let domObject = DOM_OBJECTS[domObjectKey];
         for (let attributeKey in domObject) {
             let attribute = domObject[attributeKey],
                 attributeName = attribute.name,

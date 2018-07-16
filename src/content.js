@@ -4,6 +4,9 @@ window.addEventListener("message", function(event) {
     if (event.source == window &&
         event.data &&
         event.data.direction === "from-page-script") {
-            browser.runtime.sendMessage(event.data.message);
+            browser.runtime.sendMessage({
+                action: "detection",
+                content: event.data.message
+            });
     }
 });

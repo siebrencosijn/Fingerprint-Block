@@ -22,6 +22,7 @@
     "browser_action": {
         "browser_style": true,
         "default_icon": "interface/icons/logo.png",
+        "default_popup": "interface/popup/interface.html",
         "default_title": "FP-Block"
     },
 
@@ -30,14 +31,14 @@
     },
 
     "options_ui": {
-        "page": "interface/options/options.html",
+        "page": "interface/options/optionsPage.html",
         "open_in_tab": true
     },
 
     "content_scripts": [
         {
-          "matches": ["<all_urls>"],
-          "js": ["src/content.js"]
+            "matches": ["<all_urls>"],
+            "js": ["src/content.js"]
         }
-      ]
+    ]
 }

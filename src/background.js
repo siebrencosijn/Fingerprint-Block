@@ -2,6 +2,10 @@ import webIdentities from './modules/webIdentities.js';
 import requestListener from './modules/requestListener.js';
 import responseListener from './modules/responseListener.js';
 import detectionListener from './modules/detectionListener.js';
+import options from './modules/options.js';
+
+// Load options
+options.loadOptions();
 
 // Load web identities
 webIdentities.loadWebIdentities();
@@ -20,8 +24,16 @@ browser.webRequest.onHeadersReceived.addListener(
     ["blocking","responseHeaders"]
 );
 
-// Adds the communication with content script
-browser.runtime.onMessage.addListener(detectionListener);
+// Handle communication with content script and user interface
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "detection") {
+        detectionListener(message.content);
+    } else if (message.action === "get-options") {
+        sendResponse({ response: options.getAll() });
+    } else if (message.action === "set-options") {
+        options.setOptions(message.content);
+    }
+});
 
 // TODO move to responseListener?
 // Change the Referrer-Policy of HTTP responses

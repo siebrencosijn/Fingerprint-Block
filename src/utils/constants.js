@@ -6,6 +6,15 @@ export const BROWSER_PLUGINS = [
     "other"
 ];
 
+export const SOCIAL_PLUGINS = {
+    facebook: ["connect.facebook.net/en_US/all.js", "facebook.com/plugins/"],
+    twitter: ["platform.twitter.com/widgets.js", "platform.twitter.com/widgets/"],
+    googleplus: ["apis.google.com/js/platform.js", "apis.google.com/js/plusone.js"],
+    linkedin: ["platform.linkedin.com/in.js"],
+    tumblr: ["platform.tublr.com/v1/"],
+    pinterest: ["assets.pinterest.com/js/pinit.js"]
+}
+
 export const SPOOF_ATTRIBUTES = [
     "App Code Name",
     "App Name",
@@ -28,7 +37,7 @@ export const SPOOF_ATTRIBUTES = [
     "Timezone"
 ];
 
-export const DOMOBJECTS = {
+export const DOM_OBJECTS = {
     navigator: {
         appCodeName: {name: "App Code Name", simple: true},
         appName: {name: "App Name", simple: true},
@@ -73,3 +82,12 @@ export const DOMOBJECTS = {
         //openDatabase: {name: "OpenDatabase", simple: true}
     //}
 };
+
+export const DEFAULT_OPTIONS = {
+    notify: true,
+    block_thirdparty: true,
+    dnt: true,
+    remove_etag: false,
+    block_social: true,
+    block_browser: true
+}

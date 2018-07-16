@@ -1,3 +1,4 @@
+import options from "./options.js";
 import detections from "./detections.js";
 import Detection from "../classes/Detection.js";
 import Attribute from "../classes/Attribute.js";
@@ -9,7 +10,7 @@ import Attribute from "../classes/Attribute.js";
 /********************************************/
 
 export default function detectionListener(message) {
-    let notify = true; // browser.storage.local.get("fpblock_options").notify;
+    let notify = options.get("notify");
     let domain = message.domain;
     let attributeName = message.name;
     let detection = detections.getDetection(domain);
@@ -32,6 +33,9 @@ export default function detectionListener(message) {
     }
 }
 
+/*
+ * Create a notification to display all detected attributes.
+ */
 function notifyDetection(detection) {
     const id = "detectionNotification";
     let attributeNames = detection.attributes.map(a => a.name);
