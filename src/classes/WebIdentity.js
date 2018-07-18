@@ -3,6 +3,7 @@ class WebIdentity {
         this.domain = domain;
         this.fingerprint = fingerprint;
         this.thirdparties = [];
+        this.socialplugins = {};
         this.usage = {
             amount: 0,
             date: new Date().getTime()

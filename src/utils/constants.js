@@ -7,12 +7,12 @@ export const BROWSER_PLUGINS = [
 ];
 
 export const SOCIAL_PLUGINS = {
-    facebook: ["connect.facebook.net/en_US/all.js", "facebook.com/plugins/"],
+    facebook: ["connect.facebook.net/en_US/all.js", "connect.facebook.net/en_US/sdk.js", "facebook.com/plugins/"],
     twitter: ["platform.twitter.com/widgets.js", "platform.twitter.com/widgets/"],
     googleplus: ["apis.google.com/js/platform.js", "apis.google.com/js/plusone.js"],
     linkedin: ["platform.linkedin.com/in.js"],
-    tumblr: ["platform.tublr.com/v1/"],
-    pinterest: ["assets.pinterest.com/js/pinit.js"]
+    tumblr: ["platform.tumblr.com/v1/", "api.tumblr.com/v1/", "api.tumblr.com/v2/"],
+    pinterest: ["assets.pinterest.com/js/pinit.js", "assets.pinterest.com/js/pinit_main.js", "assets.pinterest.com/sdk/sdk.js"]
 }
 
 export const SPOOF_ATTRIBUTES = [

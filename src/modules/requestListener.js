@@ -1,22 +1,22 @@
 import webIdentities from './webIdentities.js';
 import options from './options.js';
 import { getHostname } from '../utils/utils.js';
+import { SOCIAL_PLUGINS } from '../utils/constants.js';
 
 export default function requestListener(e) {
-    if (blockSocialPlugin(e.url)) {
-        return {cancel: true};
-    }
-    let target = getHostname(e.url);
-    let domain = e.originUrl == null ? target : getHostname(e.originUrl);
+    let domain = e.originUrl == null ? getHostname(e.url) : getHostname(e.originUrl);
     let webidentity = webIdentities.getWebIdentity(domain);
     webidentity.incrementUsage();
+    if (blockSocialPlugin(e.url, webidentity)) {
+        return {cancel: true};
+    }
     changeRequestHeaders(e.requestHeaders, webidentity);
     // TODO: Get third-parties; Add target domain to third-parties; Block third-parties
     return {requestHeaders: e.requestHeaders};
 }
 
 /*
- * Change HTTP request headers with values from the web identity.
+ * Changes HTTP request headers with values from the web identity.
  */
 function changeRequestHeaders(headers, webidentity) {
     let http = webidentity.fingerprint.http;
@@ -38,7 +38,19 @@ function changeRequestHeaders(headers, webidentity) {
     }
 }
 
-function blockSocialPlugin(url) {
-    // TODO
+/*
+ * Returns true if the url hosts a social plugin
+ * and should be blocked, false otherwise.
+ */
+function blockSocialPlugin(url, webidentity) {
+    let socialplugins = webidentity.socialplugins;
+    for (let plugin in SOCIAL_PLUGINS) {
+        if (SOCIAL_PLUGINS[plugin].some(s => url.indexOf(s) !== -1)) {
+            if (socialplugins[plugin] === undefined) {
+                socialplugins[plugin] = options.get("block_social");
+            }
+            return socialplugins[plugin];
+        }
+    }
     return false;
 }
