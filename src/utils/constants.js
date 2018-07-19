@@ -85,7 +85,7 @@ export const DOM_OBJECTS = {
 
 export const DEFAULT_OPTIONS = {
     notify: true,
-    block_thirdparty: true,
+    block_tpcookies: true,
     dnt: true,
     remove_etag: false,
     block_social: true,
