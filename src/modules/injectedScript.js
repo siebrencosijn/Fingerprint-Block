@@ -8,15 +8,17 @@ import webIdentities from './webIdentities.js';
 import detections from './detections.js';
 import { DOM_OBJECTS, SPOOF_ATTRIBUTES } from '../utils/constants.js';
 
+const RETURN_UNDEFIEND = "return (undefined);";
+
 export default function injectedScript(domain) {
     let fingerprint = webIdentities.getWebIdentity(domain).fingerprint;
     let detection = detections.getDetection(domain);
     let script = "\r\n<script type='text/javascript'>\r\n"
         + "function detected(domain, name, action) { "
-            + "window.postMessage({ "
-                + "direction: 'from-page-script', "
-                + "message: {domain: domain, name: name, action: action} "
-            + "}, '*'); "
+        + "window.postMessage({ "
+        + "direction: 'from-page-script', "
+        + "message: {domain: domain, name: name, action: action} "
+        + "}, '*'); "
         + "}"
         + createScript(domain, detection, fingerprint)
         + "\r\n</script>\r\n";
@@ -36,22 +38,54 @@ function createScript(domain, detection, fingerprint) {
             } else {
                 attributeAction = SPOOF_ATTRIBUTES.includes(attributeName) ? "spoof" : "block";
             }
-            if (attribute.simple) {
-                if (attributeAction !== "allow") {
-                    script += "\r\n" + domObjectKey + ".__defineGetter__('" + attributeKey + "', function() { "
-                        + "detected('" + domain + "', '" + attributeName + "', '" + attributeAction + "'); ";
-                    if (attributeAction === "spoof") {
-                        let attributeValue = fingerprint[domObjectKey][attributeKey];
-                        script += "return '" + attributeValue + "';";
-                    } else {
-                        script += "return undefined;";
+            if (attributeAction !== "allow") {
+                let callDetected = "detected('" + domain + "', '" + attributeName + "', '" + attributeAction + "');"
+                if (attribute.type === "simple") {
+                    let returnValue = RETURN_UNDEFIEND;
+                    if (attributeAction === "spoof" && fingerprint) {
+                        returnValue = "return '" + fingerprint[domObjectKey][attributeKey] + "';"
                     }
-                    script += " });";
+                    script += createScriptDefineGetter(domObjectKey, attributeKey, callDetected, returnValue);
+                } else if (attribute.type === "storage") {
+                    script += createScriptStorage(attributeKey, callDetected, RETURN_UNDEFIEND);
+                    script += createScriptDefineGetter(domObjectKey, attributeKey, callDetected, RETURN_UNDEFIEND);
+                } else if (attribute.type === "prototype") {
+                    let returnValue = RETURN_UNDEFIEND;
+                    if (attributeAction === "spoof" && fingerprint) {
+                        returnValue = "return '" + fingerprint[domObjectKey][attributeKey] + "';"
+                    }
+                    script += createScriptPrototype(attribute, callDetected, returnValue);
                 }
             }
         }
     }
-    // TODO tijdelijk, betere oplossing zoeken
-    script += "\r\nDate.prototype.getTimezoneOffset = function() { return " + fingerprint.date.timezoneOffset + "; };";
     return script;
+}
+
+function createScriptStorage(domObject, callDetected, returnValue) {
+    let attributeKeys = ["key", "getItem", "setItem", "removeItem"];
+    let script = "\r\nfor (var key in " + domObject + ") { "
+        + domObject + ".__defineGetter__(key, function() { "
+        + callDetected + " "
+        + returnValue + " }); }";
+    for (let attributeKey of attributeKeys) {
+        script += createScriptDefineGetter(domObject, attributeKey, callDetected, returnValue);
+    }
+    return script;
+}
+
+function createScriptPrototype(attribute, callDetected, returnValue) {
+    let script = "";
+    for (let functionName of attribute.functionNames) {
+        script += "\r\n\ " + attribute.objectName + ".prototype." + functionName + " = function() {"
+            + callDetected
+            + returnValue + " };";
+    }
+    return script;
+}
+
+function createScriptDefineGetter(domObject, attributeKey, callDetected, returnValue) {
+    return "\r\n" + domObject + ".__defineGetter__('" + attributeKey + "', function() { "
+        + callDetected + " "
+        + returnValue + " });";
 }

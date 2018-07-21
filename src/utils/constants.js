@@ -27,7 +27,7 @@ export const SPOOF_ATTRIBUTES = [
     "Vendor",
     "CPU Class",
     "System Language",
-    "User Language", 
+    "User Language",
     "Available Height",
     "Available Width",
     "Color depth",
@@ -39,48 +39,61 @@ export const SPOOF_ATTRIBUTES = [
 
 export const DOM_OBJECTS = {
     navigator: {
-        appCodeName: {name: "App Code Name", simple: true},
-        appName: {name: "App Name", simple: true},
-        appVersion: {name: "App version", simple: true},
-        battery: {name: "Battery", simple: true},
-        connection: {name: "Connection", simple: false},
-        cookieEnabled: {name: "Cookie enabled", simple: true},
-        geolocation: {name: "Geolocation", simple: true},
-        language: {name: "Language", simple: true},
-        mimeTypes: {name: "Mime Types", simple: false},
-        onLine: {name: "Online", simple: true},
-        oscpu: {name: "OS CPU", simple: true},
-        platform: {name: "Platform", simple: true},
-        plugins: {name: "Plugins", simple: false},
-        product: {name: "Product", simple: true},
-        userAgent: {name: "User-Agent", simple: true},
-        buildID: {name: "BuildID", simple: true},
-        doNotTrack: {name: "Do Not Track", simple: true},
-        productSub: {name: "Product Subversion", simple: true},
-        vendor: {name: "Vendor", simple: true},
-        vendorSub: {name: "Vendor Subversion", simple: true},
-        mozBattery: {name: "MozBattery", simple: true},
-        cpuClass: {name: "CPU Class", simple: true},
-        systemLanguage: {name: "System Language", simple: true},
-        userLanguage: {name: "User Language", simple: true}
+        appCodeName: { name: "App Code Name", type: "simple" },
+        appName: { name: "App Name", type: "simple" },
+        appVersion: { name: "App version", type: "simple" },
+        battery: { name: "Battery", type: "simple" },
+        connection: { name: "Connection", type: "misc" },
+        cookieEnabled: { name: "Cookie enabled", type: "simple" },
+        geolocation: { name: "Geolocation", type: "simple" },
+        language: { name: "Language", type: "simple" },
+        mimeTypes: { name: "Mime Types", type: "mimeTypes" },
+        onLine: { name: "Online", type: "simple" },
+        oscpu: { name: "OS CPU", type: "simple" },
+        platform: { name: "Platform", type: "simple" },
+        plugins: { name: "Plugins", type: "plugins" },
+        product: { name: "Product", type: "simple" },
+        userAgent: { name: "User-Agent", type: "simple" },
+        buildID: { name: "BuildID", type: "simple" },
+        doNotTrack: { name: "Do Not Track", type: "simple" },
+        productSub: { name: "Product Subversion", type: "simple" },
+        vendor: { name: "Vendor", type: "simple" },
+        vendorSub: { name: "Vendor Subversion", type: "simple" },
+        mozBattery: { name: "MozBattery", type: "simple" },
+        cpuClass: { name: "CPU Class", type: "simple" },
+        systemLanguage: { name: "System Language", type: "simple" },
+        userLanguage: { name: "User Language", type: "simple" },
+        securityPolicy: { name: "IE Security Policy", type: "simple" }
     },
     screen: {
-        availHeight: {name: "Available Height", simple: true},
-        availWidth: {name: "Available Width", simple: true},
-        colorDepth: {name: "Color depth", simple: true},
-        height: {name: "Screen Height", simple: true},
-        width: {name: "Screen Width", simple: true},
-        pixelDepth: {name: "Pixel Depth", simple: true}
+        availHeight: { name: "Available Height", type: "simple" },
+        availWidth: { name: "Available Width", type: "simple" },
+        colorDepth: { name: "Color depth", type: "simple" },
+        height: { name: "Screen Height", type: "simple" },
+        width: { name: "Screen Width", type: "simple" },
+        pixelDepth: { name: "Pixel Depth", type: "simple" }
     },
-    //date: {
-        //timezoneOffset: {name: "Timezone", simple: false}
-    //},
-    //windowObj: {
-        //localStorage: {name: "DOM Local Storage", simple: true},
-        //sessionStorage: {name: "DOM Session Storage", simple: true},
-        //indexedDB: {name: "IndexedDB", simple: true},
-        //openDatabase: {name: "OpenDatabase", simple: true}
-    //}
+    date: {
+        timezoneOffset: {
+            name: "Timezone", type: "prototype", objectName: "Date",
+            functionNames: ["getTimezoneOffset"]
+        }
+    },
+    window: {
+        localStorage: { name: "DOM Local Storage", type: "storage" },
+        sessionStorage: { name: "DOM Session Storage", type: "storage" },
+        indexedDB: { name: "IndexedDB", type: "simple" },
+        openDatabase: { name: "OpenDatabase", type: "simple" }
+    },
+
+    element: {
+        element: {
+            name: "IE userData", type: "prototype", objectName: "Element",
+            functionNames: ["addBehavior", "save", "load"]
+        }
+    }
+
+
 };
 
 export const DEFAULT_OPTIONS = {
