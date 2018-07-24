@@ -1,14 +1,4 @@
-function readFile(path, callback) {
-    fetch(path, {mode:"same-origin"}).then(function(response) {
-        return response.blob();
-    }).then(function(blob) {
-        let reader = new FileReader();
-        reader.addEventListener("loadend", function() {
-            callback(this.result);
-        });
-        reader.readAsText(blob);
-    });
-}
+import { readFile } from '../utils/utils.js';
 
 function readProfiles() {
     let profiles = [],

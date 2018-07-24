@@ -3,6 +3,13 @@ import requestListener from './modules/requestListener.js';
 import responseListener from './modules/responseListener.js';
 import detectionListener from './modules/detectionListener.js';
 import options from './modules/options.js';
+import publicSuffix from './utils/publicSuffix.js';
+import { readFile } from './utils/utils.js';
+
+// Parse public suffix list from file
+readFile('../data/public_suffix_list.dat', (list) => {
+    publicSuffix.parseList(list);
+});
 
 // Load options
 options.loadOptions();

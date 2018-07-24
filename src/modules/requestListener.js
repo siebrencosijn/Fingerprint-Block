@@ -1,17 +1,23 @@
 import webIdentities from './webIdentities.js';
 import options from './options.js';
+import publicSuffix from '../utils/publicSuffix.js';
 import { getHostname } from '../utils/utils.js';
 import { SOCIAL_PLUGINS } from '../utils/constants.js';
 
 export default function requestListener(e) {
-    let target = getHostname(e.url);
-    let domain = e.originUrl == null ? target : getHostname(e.originUrl);
-    let webidentity = webIdentities.getWebIdentity(domain);
+    let target = publicSuffix.getDomain(getHostname(e.url));
+    let origin;
+    if (e.originUrl == null) {
+        origin = target;
+    } else {
+        origin = publicSuffix.getDomain(getHostname(e.originUrl));
+    }
+    let webidentity = webIdentities.getWebIdentity(origin);
     webidentity.incrementUsage();
     if (blockSocialPlugin(e.url, webidentity.socialplugins)) {
         return {cancel: true};
     }
-    if (target !== domain && blockThirdParty(target, webidentity.thirdparties)) {
+    if (target !== origin && blockThirdParty(target, webidentity.thirdparties)) {
         return {cancel: true};
     }
     changeRequestHeaders(e.requestHeaders, webidentity);
