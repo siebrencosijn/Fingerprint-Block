@@ -3,7 +3,7 @@
  */
 let publicSuffix = {
     rules: {},
-    exceptions: {},
+    exceptions: [],
 
     /*
      * Parse the rules from the public suffix list to objects.
@@ -17,21 +17,21 @@ let publicSuffix = {
             if (line.length === 0 || line.startsWith("//")) {
                 continue;
             }
-            let type = this.rules;
             // if a rule begins with "!", it is an exception rule
             if (line.startsWith("!")) {
                 line = line.slice(1);
-                type = this.exceptions;
-            }
-            // add rule to object
-            let labels = line.split(".");
-            let prev = type;
-            for (let i = labels.length; i-- > 0;) {
-                let label = labels[i];
-                if (prev[label] == null) {
-                    prev[label] = i === 0 ? null : {};
+                this.exceptions.push(line);
+            } else {
+                // add rule to rules object
+                let labels = line.split(".");
+                let prev = this.rules;
+                for (let i = labels.length; i-- > 0;) {
+                    let label = labels[i];
+                    if (prev[label] == null) {
+                        prev[label] = i === 0 ? null : {};
+                    }
+                    prev = prev[label];
                 }
-                prev = prev[label];
             }
         }
     },
@@ -46,41 +46,56 @@ let publicSuffix = {
      */
     getDomain(hostname) {
         let labels = hostname.split(".");
-        // look for exception first
-        let rule = this.longestMatchingRule(this.exceptions, labels);
+        // try to match exception first
+        let rule = this.matchException(hostname);
         if (rule.length === 0) {
-            // no exception found, use normal rule
-            rule = this.longestMatchingRule(this.rules, labels);
+            // no exception found, try to match rule
+            rule = this.matchLongestRule(labels);
             if (rule.length === 0) {
-                // no rule found, using full hostname
-                return hostname;
+                // no rule found, use "*" as rule
+                rule = ["*"];
             }
+        } else {
+            // modify exception by removing the leftmost label
+            rule.pop();
         }
         let diff = labels.length - rule.length;
-        let domain = labels.slice(diff - 1, labels.length);
-        return domain.join(".");
+        return labels.slice(diff - 1, labels.length).join(".");
+    },
+
+    /*
+     * Finds the matching exception for given hostname.
+     */
+    matchException(hostname) {
+        for (let exception of this.exceptions) {
+            if (hostname.includes(exception)) {
+                return exception.split(".");
+            }
+        }
+        return [];
     },
 
     /*
      * Finds the longest matching rule for given labels.
      */
-    longestMatchingRule(rules, labels) {
+    matchLongestRule(labels) {
         const wildcard = "*";
         let result = [];
-        let prev = rules;
+        let prev = this.rules;
         for (let i = labels.length; i-- > 0;) {
             let label = labels[i];
-            if (prev[label] != null) {
+            if (prev === null) {
+                // end of rule
+                break;
+            }
+            if (prev.hasOwnProperty(label)) {
                 // matching label found
                 result.push(label);
                 prev = prev[label];
-            } else if (prev[wildcard] != null) {
+            } else if (prev.hasOwnProperty(wildcard)) {
                 // wildcard found
                 result.push(wildcard);
                 prev = prev[wildcard];
-            } else {
-                // no match found, stop search
-                break;
             }
         }
         return result;
