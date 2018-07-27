@@ -1,7 +1,7 @@
 import webIdentities from './modules/webIdentities.js';
 import requestListener from './modules/requestListener.js';
 import responseListener from './modules/responseListener.js';
-import detectionListener from './modules/detectionListener.js';
+import messageListener  from './modules/messageListener.js';
 import options from './modules/options.js';
 import publicSuffix from './utils/publicSuffix.js';
 import { readFile } from './utils/utils.js';
@@ -32,15 +32,7 @@ browser.webRequest.onHeadersReceived.addListener(
 );
 
 // Handle communication with content script and user interface
-browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === "detection") {
-        detectionListener(message.content);
-    } else if (message.action === "get-options") {
-        sendResponse({ response: options.getAll() });
-    } else if (message.action === "set-options") {
-        options.setOptions(message.content);
-    }
-});
+browser.runtime.onMessage.addListener(messageListener);
 
 // TODO move to responseListener?
 // Change the Referrer-Policy of HTTP responses

@@ -6,8 +6,12 @@
 /****************************************************************/
 
 #fingerprintprivacy-popup { 
+    /*
 	width: 206px;
 	height: 276px; 
+    */
+    width: 220px;
+    height: 300px;
     font-size: 11px;
 	position: relative;
     background-color: #FFFFFF;
