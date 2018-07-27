@@ -22,5 +22,18 @@ export default function messageListener(message, sender, sendResponse) {
                 detection: detection
             }
         });
+    } else if (message.action === "notificationButton") {
+        if(message.content === "keep") {
+            detections.getDetection(message.domain).notified = true;          
+        } else if(message.content === "allow") {
+            let url = browser.extension.getURL("interface/options/webidentities.html");
+            browser.windows.create({
+                url : url,
+                type : 'panel',
+                height: 400,
+                width : 400
+            });
+            detections.getDetection(message.domain).notified = true;
+        }
     }
 }

@@ -29,7 +29,6 @@ export default function detectionListener(message) {
 
     if (notify && !detection.notified) {
         notifyDetection(detection);
-        detection.notified = true;
     }
 }
 
@@ -37,17 +36,16 @@ export default function detectionListener(message) {
  * Create a notification to display all detected attributes.
  */
 function notifyDetection(detection) {
-    const id = "detectionNotification";
     let attributeNames = detection.attributes.map(a => a.name);
     let message = "FP-Block prevented " + detection.domain + " from reading the following attributes: " + attributeNames.join(", ");
-    let options = {
-        "type": "basic",
-        "iconUrl": browser.extension.getURL("interface/icons/icon.png"),
-        "title": "Notification",
-        "message": message
-    }
-    // browser.notifications.update niet compatibel met firefox
-    // tijdelijke oplossing
-    browser.notifications.clear(id);
-    browser.notifications.create(id, options);
+    browser.tabs.query({ currentWindow: true, active: true }).then(
+        tabs => {
+            for (let tab of tabs) {
+                browser.tabs.sendMessage(
+                    tab.id,
+                    { message: message, action: "notify", domain: detection.domain }
+                )
+            }
+        }
+    );   
 }

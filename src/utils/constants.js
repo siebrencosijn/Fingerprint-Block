@@ -92,8 +92,6 @@ export const DOM_OBJECTS = {
             functionNames: ["addBehavior", "save", "load"]
         }
     }
-
-
 };
 
 export const DEFAULT_OPTIONS = {

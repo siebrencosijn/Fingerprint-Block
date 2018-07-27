@@ -18,8 +18,7 @@ export default function injectedScript(domain) {
         + "window.postMessage({ "
         + "direction: 'from-page-script', "
         + "message: {domain: domain, name: name, action: action} "
-        + "}, '*'); "
-        + "}"
+        + "}, '*') };"
         + createScript(domain, detection, fingerprint)
         + "\r\n</script>\r\n";
     return script;
@@ -39,7 +38,7 @@ function createScript(domain, detection, fingerprint) {
                 attributeAction = SPOOF_ATTRIBUTES.includes(attributeName) ? "spoof" : "block";
             }
             if (attributeAction !== "allow") {
-                let callDetected = "detected('" + domain + "', '" + attributeName + "', '" + attributeAction + "');"
+                let callDetected = "detected('" + domain + "', '" + attributeName + "', '" + attributeAction + "');"               
                 if (attribute.type === "simple") {
                     let returnValue = RETURN_UNDEFIEND;
                     if (attributeAction === "spoof" && fingerprint) {
