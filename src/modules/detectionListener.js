@@ -44,8 +44,8 @@ function notifyDetection(detection) {
                 browser.tabs.sendMessage(
                     tab.id,
                     { message: message, action: "notify", domain: detection.domain }
-                )
+                );
             }
         }
-    );   
+    );
 }

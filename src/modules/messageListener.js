@@ -14,7 +14,7 @@ export default function messageListener(message, sender, sendResponse) {
         options.setOptions(message.content);
     } else if (message.action === "get-webidentity-detection") {
         let domain = publicSuffix.getDomain(getHostname(message.content));
-        let webidentity = webIdentities.getWebIdentity(domain);
+        let webidentity = domain ? webIdentities.getWebIdentity(domain) : undefined;
         let detection = detections.getDetection(domain);
         sendResponse({
             response: {
@@ -24,7 +24,7 @@ export default function messageListener(message, sender, sendResponse) {
         });
     } else if (message.action === "notificationButton") {
         if(message.content === "keep") {
-            detections.getDetection(message.domain).notified = true;          
+            detections.getDetection(message.domain).notified = true;
         } else if(message.content === "allow") {
             let url = browser.extension.getURL("interface/options/webidentities.html");
             browser.windows.create({

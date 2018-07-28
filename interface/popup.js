@@ -1,23 +1,34 @@
 function init(webidentity, detection) {
-    document.querySelector("#domain").innerHTML = webidentity.domain;
-    initAttributes(detection.attributes);
-    initThirdParties(webidentity.thirdparties);
-    initSocialPlugins(webidentity.socialplugins);
-    initBrowserPlugins(webidentity.browserplugins);
+    if (webidentity !== undefined) {
+        document.querySelector("#domain").innerHTML = webidentity.domain;
+        initDetection(detection);
+        initThirdParties(webidentity.thirdparties);
+        initSocialPlugins(webidentity.socialplugins);
+        initBrowserPlugins(webidentity.browserplugins);
+    } else {
+        // no web identity for this tab
+        // e.g. about:blank, about:newtab
+        // TODO show message in popup
+    }
 }
 
-function initAttributes(attributes) {
+function initDetection(detection) {
     let attrSpoofedBlocked = 0;
-    let table = document.querySelector("#attribute-table");
-    for (let attribute of attributes) {
-        let checked = attribute.action === "spoof" || attribute.action === "block";
-        if (checked) {
-            attrSpoofedBlocked++;
+    let length = 0;
+    if (detection !== undefined) {
+        let table = document.querySelector("#attribute-table");
+        let attributes = detection.attributes;
+        length = attributes.length;
+        for (let attribute of attributes) {
+            let checked = attribute.action === "spoof" || attribute.action === "block";
+            if (checked) {
+                attrSpoofedBlocked++;
+            }
+            appendToTable(table, attribute.name, checked);
         }
-        appendToTable(table, attribute.name, checked);
     }
     document.querySelector("#detected-attributes").innerHTML =
-        attrSpoofedBlocked + "/" + attributes.length;
+        attrSpoofedBlocked + "/" + length;
 }
 
 function initThirdParties(thirdparties) {
