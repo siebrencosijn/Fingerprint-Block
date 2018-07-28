@@ -2,6 +2,7 @@ import options from "./options.js";
 import detections from "./detections.js";
 import Detection from "../classes/Detection.js";
 import Attribute from "../classes/Attribute.js";
+import {DOM_OBJECTS} from "../utils/constants.js";
 
 /********************************************/
 /* -- Fingerprint Privacy --                */
@@ -23,7 +24,8 @@ export default function detectionListener(message) {
 
     if (!detection.containsAttribute(attributeName)) {
         let attributeAction = message.action;
-        detection.addAttribute(new Attribute(attributeName, attributeAction));
+        let attributeKey = getAttributeKey(attributeName);
+        detection.addAttribute(new Attribute(attributeName, attributeKey, attributeAction));
         detection.notified = false;
     }
 
@@ -48,4 +50,14 @@ function notifyDetection(detection) {
             }
         }
     );
+}
+
+function getAttributeKey(attributeName) {
+    for (let domObjectKey in DOM_OBJECTS) {
+        for (let attributeKey in DOM_OBJECTS[domObjectKey]) {
+            if (DOM_OBJECTS[domObjectKey][attributeKey].name === attributeName) {
+                return attributeKey;
+            }
+        }
+    }
 }

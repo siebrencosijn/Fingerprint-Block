@@ -28,8 +28,8 @@ function addElement(message, domain) {
     var element = document.createElement("div");
     element.setAttribute('id', 'content-script-notification');
     element.style.position = "absolute";
-    element.style.width = "1500px";
-    element.style.height = "50px";
+    element.style.width = "500px";
+    element.style.height = "250px";
     element.style.backgroundColor = "gray";
     element.style.top = "6px";
     element.style.left = "13px";

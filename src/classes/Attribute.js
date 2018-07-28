@@ -1,6 +1,7 @@
 class Attribute {
-    constructor(name, action) {
+    constructor(name, key, action) {
         this.name = name;
+        this.key = key;
         this.action = action;
     }
 }
