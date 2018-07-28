@@ -10,25 +10,11 @@ function initAttributes(attributes) {
     let attrSpoofedBlocked = 0;
     let table = document.querySelector("#attribute-table");
     for (let attribute of attributes) {
-        if (attribute.action === "spoof" || attribute.action === "block") {
+        let checked = attribute.action === "spoof" || attribute.action === "block";
+        if (checked) {
             attrSpoofedBlocked++;
         }
-        let tr = document.createElement("tr");
-        let td1 = document.createElement("td");
-        let td2 = document.createElement("td");
-        let input = document.createElement("input");
-        let div = document.createElement("div");
-        td1.style.width = "30px";
-        input.type = "checkbox";
-        input.class = "attribute-checkbox";
-        input.checked = attribute.action === "spoof" || attribute.action === "block";
-        td1.appendChild(input);
-        div.class = "attribute-label";
-        div.innerHTML = attribute.name;
-        td2.appendChild(div);
-        tr.appendChild(td1);
-        tr.appendChild(td2);
-        table.appendChild(tr);
+        appendToTable(table, attribute.name, checked);
     }
     document.querySelector("#detected-attributes").innerHTML =
         attrSpoofedBlocked + "/" + attributes.length;
@@ -38,32 +24,68 @@ function initThirdParties(thirdparties) {
     let thirdpartiesBlocked = 0;
     let table = document.querySelector("#third-party-table");
     for (let thirdparty of thirdparties) {
-        if (thirdparty.blocked === true) {
+        let checked = thirdparty.blocked;
+        if (checked) {
             thirdpartiesBlocked++;
         }
-        let tr = document.createElement("tr");
-        let td1 = document.createElement("td");
-        let td2 = document.createElement("td");
-        let input = document.createElement("input");
-        let div = document.createElement("div");
-        td1.style.width = "30px";
-        input.type = "checkbox";
-        input.class = "third-party-checkbox";
-        input.checked = thirdparty.blocked;
-        td1.appendChild(input);
-        div.class = "third-party-label";
-        div.innerHTML = thirdparty.name;
-        td2.appendChild(div);
-        tr.appendChild(td1);
-        tr.appendChild(td2);
-        table.appendChild(tr);
+        appendToTable(table, thirdparty.name, checked);
     }
     document.querySelector("#detected-third-parties").innerHTML =
         thirdpartiesBlocked + "/" + thirdparties.length;
 }
 
+function appendToTable(table, text, checked) {
+    let tr = document.createElement("tr");
+    let td1 = document.createElement("td");
+    let td2 = document.createElement("td");
+    let input = document.createElement("input");
+    let div = document.createElement("div");
+    td1.style.width = "30px"; // TODO add to css
+    input.type = "checkbox";
+    input.class = "checkbox";
+    input.checked = checked;
+    td1.appendChild(input);
+    div.class = "label";
+    div.innerHTML = text;
+    td2.appendChild(div);
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    table.appendChild(tr);
+}
+
 function initSocialPlugins(socialplugins) {
-    // TODO
+    let tr = document.querySelector("#social-plugins-tr");
+    if (socialplugins.length === 0) {
+        let td = document.createElement("td");
+        let div = document.createElement("div");
+        td.class = "plugins-logo";
+        td.style["padding-top"] = "10px"; // TODO add to css
+        div.class = "error-message";
+        div.innerHTML = "No social plugins detected";
+        td.appendChild(div);
+        tr.appendChild(td);
+    } else {
+        for (let socialplugin of socialplugins) {
+            let name = socialplugin.name;
+            let td = document.createElement("td");
+            let img = document.createElement("img");
+            let src = "interface/icons/" + name;
+            let tooltip = name.charAt(0).toUpperCase() + name.slice(1);
+            if (socialplugin.block) {
+                src += "-blocked.png";
+                tooltip += " blocked - click to allow";
+            } else {
+                src += "-allowed.png";
+                tooltip += " allowed - click to block";
+            }
+            img.src = browser.extension.getURL(src);
+            img.class = "button";
+            img.id = name + "button";
+            img.tooltiptext = tooltip;
+            td.appendChild(img);
+            tr.appendChild(td);
+        }
+    }
 }
 
 function initBrowserPlugins(browserplugins) {

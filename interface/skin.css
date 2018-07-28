@@ -100,26 +100,17 @@ table {
     display: none;
 }
 
-.attribute-checkbox {
-	margin-left: 15px;
+.checkbox {
+    margin-left: 15px;
 }
 
-.attribute-label {
+.label {
     color: #A1A1A1;
     padding-left: 10px;
 }
 
 #third-parties-list {
     display: none;
-}
-
-.third-party-checkbox {
-    margin-left: 15px;
-}
-
-.third-party-label {
-    color: #A1A1A1;
-    padding-left: 10px;
 }
 
 #browser-plugins {
