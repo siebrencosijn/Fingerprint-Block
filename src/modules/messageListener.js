@@ -29,6 +29,10 @@ export default function messageListener(message, sender, sendResponse) {
                 detections: detections.detections
             }
         });
+    } else if (message.action === "toggle-webidentity") {
+        let domain = publicSuffix.getDomain(getHostname(message.content.url));
+        let webidentity = webIdentities.getWebIdentity(domain);
+        webidentity.enabled = message.content.enabled;
     } else if (message.action === "notificationButton") {
         if (message.content === "keep") {
             detections.getDetection(message.domain).notified = true;

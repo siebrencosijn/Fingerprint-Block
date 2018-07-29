@@ -4,23 +4,24 @@ import publicSuffix from '../utils/publicSuffix.js';
 import { getHostname } from '../utils/utils.js';
 import { SOCIAL_PLUGINS } from '../utils/constants.js';
 
-export default function requestListener(e) {
+export default async function requestListener(e) {
     let target = publicSuffix.getDomain(getHostname(e.url));
-    let origin;
-    if (e.originUrl == null) {
+    let tabs = await browser.tabs.query({currentWindow: true, active: true});
+    let origin = publicSuffix.getDomain(getHostname(tabs[0].url));
+    if (!origin) {
         origin = target;
-    } else {
-        origin = publicSuffix.getDomain(getHostname(e.originUrl));
     }
     let webidentity = webIdentities.getWebIdentity(origin);
     webidentity.incrementUsage();
-    if (blockSocialPlugin(e.url, webidentity.socialplugins)) {
-        return {cancel: true};
+    if (webidentity.enabled) {
+        if (target !== origin && blockThirdParty(target, webidentity.thirdparties)) {
+            return {cancel: true};
+        }
+        if (blockSocialPlugin(e.url, webidentity.socialplugins)) {
+            return {cancel: true};
+        }
+        changeRequestHeaders(e.requestHeaders, webidentity);
     }
-    if (target !== origin && blockThirdParty(target, webidentity.thirdparties)) {
-        return {cancel: true};
-    }
-    changeRequestHeaders(e.requestHeaders, webidentity);
     return {requestHeaders: e.requestHeaders};
 }
 

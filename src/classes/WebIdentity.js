@@ -1,5 +1,6 @@
 class WebIdentity {
     constructor(domain, fingerprint) {
+        this.enabled = true;
         this.domain = domain;
         this.fingerprint = fingerprint;
         this.thirdparties = [];

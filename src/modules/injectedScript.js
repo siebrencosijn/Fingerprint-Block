@@ -4,14 +4,14 @@
 /* Date: 3.07.2018                          */
 /********************************************/
 
-import webIdentities from './webIdentities.js';
 import detections from './detections.js';
 import { DOM_OBJECTS, SPOOF_ATTRIBUTES } from '../utils/constants.js';
 
-const RETURN_UNDEFIEND = "return (undefined);";
+const RETURN_UNDEFINED = "return (undefined);";
 
-export default function injectedScript(domain) {
-    let fingerprint = webIdentities.getWebIdentity(domain).fingerprint;
+export default function injectedScript(webidentity) {
+    let domain = webidentity.domain;
+    let fingerprint = webidentity.fingerprint;
     let detection = detections.getDetection(domain);
     let script = "\r\n<script type='text/javascript'>\r\n"
         + "function detected(domain, name, action) { "
@@ -38,20 +38,20 @@ function createScript(domain, detection, fingerprint) {
                 attributeAction = SPOOF_ATTRIBUTES.includes(attributeName) ? "spoof" : "block";
             }
             if (attributeAction !== "allow") {
-                let callDetected = "detected('" + domain + "', '" + attributeName + "', '" + attributeAction + "');"               
+                let callDetected = "detected('" + domain + "', '" + attributeName + "', '" + attributeAction + "');";
                 if (attribute.type === "simple") {
-                    let returnValue = RETURN_UNDEFIEND;
+                    let returnValue = RETURN_UNDEFINED;
                     if (attributeAction === "spoof" && fingerprint) {
-                        returnValue = "return '" + fingerprint[domObjectKey][attributeKey] + "';"
+                        returnValue = "return '" + fingerprint[domObjectKey][attributeKey] + "';";
                     }
                     script += createScriptDefineGetter(domObjectKey, attributeKey, callDetected, returnValue);
                 } else if (attribute.type === "storage") {
-                    script += createScriptStorage(attributeKey, callDetected, RETURN_UNDEFIEND);
-                    script += createScriptDefineGetter(domObjectKey, attributeKey, callDetected, RETURN_UNDEFIEND);
+                    script += createScriptStorage(attributeKey, callDetected, RETURN_UNDEFINED);
+                    script += createScriptDefineGetter(domObjectKey, attributeKey, callDetected, RETURN_UNDEFINED);
                 } else if (attribute.type === "prototype") {
-                    let returnValue = RETURN_UNDEFIEND;
+                    let returnValue = RETURN_UNDEFINED;
                     if (attributeAction === "spoof" && fingerprint) {
-                        returnValue = "return '" + fingerprint[domObjectKey][attributeKey] + "';"
+                        returnValue = "return '" + fingerprint[domObjectKey][attributeKey] + "';";
                     }
                     script += createScriptPrototype(attribute, callDetected, returnValue);
                 }

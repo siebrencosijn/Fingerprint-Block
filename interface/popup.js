@@ -5,6 +5,7 @@ function init(webidentity, detection) {
         initThirdParties(webidentity.thirdparties);
         initSocialPlugins(webidentity.socialplugins);
         initBrowserPlugins(webidentity.browserplugins);
+        initWebsiteToggle(webidentity.enabled);
     } else {
         // no web identity for this tab
         // e.g. about:blank, about:newtab
@@ -101,6 +102,25 @@ function initSocialPlugins(socialplugins) {
 
 function initBrowserPlugins(browserplugins) {
     // TODO
+}
+
+function initWebsiteToggle(enabled) {
+    let websitetoggle = document.querySelector("#websiteonoffswitch");
+    websitetoggle.checked = enabled;
+    websitetoggle.addEventListener("change", () => {
+        browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {
+            let tab = tabs[0];
+            browser.runtime.sendMessage({
+                action: "toggle-webidentity",
+                content: {
+                    url: tab.url,
+                    enabled: websitetoggle.checked
+                }
+            }).then(() => {
+                browser.tabs.reload(tab.id);
+            });
+        });
+   });
 }
 
 document.addEventListener("DOMContentLoaded", () => {

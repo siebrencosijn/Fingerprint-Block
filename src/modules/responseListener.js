@@ -4,6 +4,7 @@
 /* Date: 2.07.2018                          */
 /********************************************/
 import injectedScript from './injectedScript.js';
+import webIdentities from './webIdentities.js';
 import publicSuffix from '../utils/publicSuffix.js';
 import { getHostname } from '../utils/utils.js';
 
@@ -11,19 +12,25 @@ const CONTENT_TYPE = "Content-Type",
       TEXT_HTML = "text/html",
       TEXT_HTML_WITH_CHARSET = TEXT_HTML + "; charset";
 
-export default function responseListener(details) {
-    if (isContentType(details)) {
+export default async function responseListener(details) {
+    let tabs = await browser.tabs.query({currentWindow: true, active: true});
+    let domain = publicSuffix.getDomain(getHostname(tabs[0].url));
+    if (!domain) {
+        domain = publicSuffix.getDomain(getHostname(details.url));
+    }
+    let webidentity = webIdentities.getWebIdentity(domain);
+    if (webidentity.enabled && isContentType(details)) {
         let filter = browser.webRequest.filterResponseData(details.requestId);
         let decoder = new TextDecoder(getCharset(details));
         let encoder = new TextEncoder();
         filter.ondata = event => {
             let str = decoder.decode(event.data, { stream: true });
-            var script = "\r\n<meta charset='utf-8'>" + injectedScript(publicSuffix.getDomain(getHostname(details.url)));
+            var script = "\r\n<meta charset='utf-8'>" + injectedScript(webidentity);
             var pattern = /(<head[^>]*>)/i;
-            str = str.replace(pattern, "$1" + script)
+            str = str.replace(pattern, "$1" + script);
             filter.write(encoder.encode(str));
             filter.disconnect();
-        }
+        };
     }
 }
 
@@ -38,7 +45,7 @@ function isContentType(details) {
 }
 
 /*
-* Returns a charset from response header 'content-type' if it exits. 
+* Returns a charset from response header 'content-type' if it exits.
 */
 function getCharset(details) {
     var charset = "utf-8";
