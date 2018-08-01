@@ -107,6 +107,7 @@ function getRandomRevision(dots, revision) {
 /*
  * Return a navigator object with random values.
  */
+
 function getRandomNavigatorObject(profile, os, proc, language, useragent) {
     let platform = (os === "win") ? "Win32" : (os === "mac") ? "MacIntel" : "Linux " + proc;
     let cpuClass = (proc.includes("Intel")) ? "x86" : (proc.includes("86")) ? "x86" : (proc.includes("PPC")) ? "PPC" : "Other";
@@ -132,16 +133,16 @@ function getRandomNavigatorObject(profile, os, proc, language, useragent) {
  */
 function getRandomScreenObject(profile) {
     let screenresolution = random(profile.screen.resolutions).split("x");
-    let colordepth = parseInt(random(profile.screen.colordepth));
+    let colorDepth = parseInt(random(profile.screen.colorDepth));
     let width = parseInt(screenresolution[0]);
     let height = parseInt(screenresolution[1]);
     return {
         width: width,
         height: height,
-        colorDepth: colordepth,
+        colorDepth: colorDepth,
         availWidth: width,
         availHeight: height - profile.screen.toolbar,
-        pixelDepth: colordepth
+        pixelDepth: colorDepth
     };
 }
 

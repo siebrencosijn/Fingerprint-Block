@@ -39,66 +39,85 @@ export const SPOOF_ATTRIBUTES = [
 
 export const DOM_OBJECTS = {
     navigator: {
-        appCodeName: { name: "App Code Name", type: "simple" },
-        appName: { name: "App Name", type: "simple" },
-        appVersion: { name: "App version", type: "simple" },
-        battery: { name: "Battery", type: "simple" },
-        connection: { name: "Connection", type: "misc" },
-        cookieEnabled: { name: "Cookie enabled", type: "simple" },
-        geolocation: { name: "Geolocation", type: "simple" },
-        language: { name: "Language", type: "simple" },
-        mimeTypes: { name: "Mime Types", type: "mimeTypes" },
-        onLine: { name: "Online", type: "simple" },
-        oscpu: { name: "OS CPU", type: "simple" },
-        platform: { name: "Platform", type: "simple" },
-        plugins: { name: "Plugins", type: "plugins" },
-        product: { name: "Product", type: "simple" },
-        userAgent: { name: "User-Agent", type: "simple" },
-        buildID: { name: "BuildID", type: "simple" },
-        doNotTrack: { name: "Do Not Track", type: "simple" },
-        productSub: { name: "Product Subversion", type: "simple" },
-        vendor: { name: "Vendor", type: "simple" },
-        vendorSub: { name: "Vendor Subversion", type: "simple" },
-        mozBattery: { name: "MozBattery", type: "simple" },
-        cpuClass: { name: "CPU Class", type: "simple" },
-        systemLanguage: { name: "System Language", type: "simple" },
-        userLanguage: { name: "User Language", type: "simple" },
-        securityPolicy: { name: "IE Security Policy", type: "simple" }
+        appCodeName: { name: "App Code Name", type: "direct", typeOfValue: "string" },
+        appName: { name: "App Name", type: "direct", typeOfValue: "string" },
+        appVersion: { name: "App version", type: "direct", typeOfValue: "string" },
+        battery: { name: "Battery", type: "direct", typeOfValue: "string" },
+        connection: { name: "Connection", type: "misc", typeOfValue: "string" },
+        cookieEnabled: { name: "Cookie enabled", type: "direct", typeOfValue: "string" },
+        geolocation: { name: "Geolocation", type: "direct", typeOfValue: "string" },
+        language: { name: "Language", type: "direct", typeOfValue: "string" },
+        mimeTypes: { name: "Mime Types", type: "mimeTypes", typeOfValue: "array" },
+        onLine: { name: "Online", type: "direct", typeOfValue: "string" },
+        oscpu: { name: "OS CPU", type: "direct", typeOfValue: "string" },
+        platform: { name: "Platform", type: "direct", typeOfValue: "string" },
+        plugins: { name: "Plugins", type: "plugins", typeOfValue: "array" },
+        product: { name: "Product", type: "direct", typeOfValue: "string" },
+        userAgent: { name: "User-Agent", type: "direct", typeOfValue: "string" },
+        buildID: { name: "BuildID", type: "direct", typeOfValue: "string" },
+        doNotTrack: { name: "Do Not Track", type: "direct", typeOfValue: "string" },
+        productSub: { name: "Product Subversion", type: "direct", typeOfValue: "string" },
+        vendor: { name: "Vendor", type: "direct", typeOfValue: "string" },
+        vendorSub: { name: "Vendor Subversion", type: "direct", typeOfValue: "string" },
+        mozBattery: { name: "MozBattery", type: "direct", typeOfValue: "string" },
+        cpuClass: { name: "CPU Class", type: "direct", typeOfValue: "string" },
+        systemLanguage: { name: "System Language", type: "direct", typeOfValue: "string" },
+        userLanguage: { name: "User Language", type: "direct", typeOfValue: "string" },
+        securityPolicy: { name: "IE Security Policy", type: "direct", typeOfValue: "string" }
     },
     screen: {
-        availHeight: { name: "Available Height", type: "simple" },
-        availWidth: { name: "Available Width", type: "simple" },
-        colorDepth: { name: "Color depth", type: "simple" },
-        height: { name: "Screen Height", type: "simple" },
-        width: { name: "Screen Width", type: "simple" },
-        pixelDepth: { name: "Pixel Depth", type: "simple" }
+        availHeight: { name: "Available Height", type: "direct", typeOfValue: "number" },
+        availWidth: { name: "Available Width", type: "direct", typeOfValue: "number" },
+        colorDepth: { name: "Color depth", type: "direct", typeOfValue: "number" },
+        height: { name: "Screen Height", type: "direct", typeOfValue: "number" },
+        width: { name: "Screen Width", type: "direct", typeOfValue: "number" },
+        pixelDepth: { name: "Pixel Depth", type: "direct", typeOfValue: "number" }
     },
     date: {
         timezoneOffset: {
             name: "Timezone", type: "prototype", objectName: "Date",
-            functionNames: ["getTimezoneOffset"]
+            functionNames: ["getTimezoneOffset"], typeOfValue: "number"
         }
     },
     window: {
-        localStorage: { name: "DOM Local Storage", type: "storage" },
-        sessionStorage: { name: "DOM Session Storage", type: "storage" },
-        indexedDB: { name: "IndexedDB", type: "simple" },
-        openDatabase: { name: "OpenDatabase", type: "simple" }
+        localStorage: {
+            name: "DOM Local Storage", type: "storage", objectName: "localStorage",
+            functionNames: ["key", "getItem", "setItem", "removeItem"]
+        },
+        sessionStorage: {
+            name: "DOM Session Storage", type: "storage", objectName: "sessionStorage",
+            functionNames: ["key", "getItem", "setItem", "removeItem"]
+        },
+        indexedDB: { name: "IndexedDB", type: "direct" },
+        openDatabase: { name: "OpenDatabase", type: "direct" }
     },
 
-    element: {
-        element: {
+    Element: {
+        ieUserData: {
             name: "IE userData", type: "prototype", objectName: "Element",
             functionNames: ["addBehavior", "save", "load"]
         }
     }
 };
 
-export const DEFAULT_OPTIONS = {
-    notify: true,
-    block_tpcookies: true,
-    dnt: true,
-    remove_etag: false,
-    block_social: true,
-    block_browser: true
+export const ELEMENTS_PREVENTING_FONT_DETECTION = {
+    HTMLElement: {
+        offsetWidth: {
+            name: "Element Offset Width", type: "prototype", objectName: "HTMLElement",
+            functionNames: ["offsetWidth"], var: "width"
+        },
+        offsetHeight: {
+            name: "Element Offset Height", type: "prototype", objectName: "HTMLElement",
+            functionNames: ["offsetHeight"], var: "height"
+        }
+    }
 }
+
+export const DEFAULT_OPTIONS = {
+        notify: true,
+        block_tpcookies: true,
+        dnt: true,
+        remove_etag: false,
+        block_social: true,
+        block_browser: true
+    }

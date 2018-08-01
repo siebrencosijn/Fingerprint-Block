@@ -39,36 +39,52 @@ function createScript(domain, detection, fingerprint) {
             }
             if (attributeAction !== "allow") {
                 let callDetected = "detected('" + domain + "', '" + attributeName + "', '" + attributeKey + "', '" + attributeAction + "');";
-                if (attribute.type === "simple") {
-                    let returnValue = RETURN_UNDEFINED;
+                let returnValue = RETURN_UNDEFINED;
+                if (attribute.type === "direct") {
                     if (attributeAction === "spoof" && fingerprint) {
-                        returnValue = "return '" + fingerprint[domObjectKey][attributeKey] + "';";
+                        let fingerpintValue = fingerprint[domObjectKey][attributeKey];
+                        if (attribute.typeOfValue === "number" || fingerpintValue === 'undefined') {
+                            returnValue = "return " + fingerpintValue + ";";
+                        } else {
+                            returnValue = "return '" + fingerpintValue + "';";
+                        }
                     }
                     script += createScriptDefineGetter(domObjectKey, attributeKey, callDetected, returnValue);
                 } else if (attribute.type === "storage") {
-                    script += createScriptStorage(attributeKey, callDetected, RETURN_UNDEFINED);
+                    script += createScriptStorage(attribute, callDetected, RETURN_UNDEFINED);
                     script += createScriptDefineGetter(domObjectKey, attributeKey, callDetected, RETURN_UNDEFINED);
                 } else if (attribute.type === "prototype") {
                     let returnValue = RETURN_UNDEFINED;
-                    if (attributeAction === "spoof" && fingerprint) {
-                        returnValue = "return '" + fingerprint[domObjectKey][attributeKey] + "';";
+                    if (domObjectKey === "HTMLElement") {
+                        returnValue = "return " + DOM_OBJECTS[domObjectKey][attributeKey].var + ";";
+                    } else if (attributeAction === "spoof" && fingerprint) {
+                        let fingerprintValue = fingerprint[domObjectKey][attributeKey];
+                        if (attribute.typeOfValue === 'number' || fingerprintValue === 'undefined') {
+                            returnValue = "return " + fingerprintValue + ";";
+                        } else {
+                            returnValue = "return '" + fingerprintValue + "';";
+                        }
                     }
                     script += createScriptPrototype(attribute, callDetected, returnValue);
+                } else if (attribute.type === "plugins" || attribute.type === "mimeTypes") {
+                    let returnValue = "return [];"
+                    script += createScriptDefineGetter(domObjectKey, attributeKey, callDetected, returnValue);
                 }
             }
         }
     }
+    script += createScriptPrevetingFontDetection();
     return script;
 }
 
 function createScriptStorage(domObject, callDetected, returnValue) {
-    let attributeKeys = ["key", "getItem", "setItem", "removeItem"];
-    let script = "\r\nfor (var key in " + domObject + ") { "
-        + domObject + ".__defineGetter__(key, function() { "
+    let functionsNames = domObject.functionNames;
+    let script = "\r\nfor (var key in " + domObject.objectName + ") { "
+        + domObject.objectName + ".__defineGetter__(key, function() { "
         + callDetected + " "
         + returnValue + " }); }";
-    for (let attributeKey of attributeKeys) {
-        script += createScriptDefineGetter(domObject, attributeKey, callDetected, returnValue);
+    for (let functionName of functionsNames) {
+        script += createScriptDefineGetter(domObject.objectName, functionName, callDetected, returnValue);
     }
     return script;
 }
@@ -76,15 +92,22 @@ function createScriptStorage(domObject, callDetected, returnValue) {
 function createScriptPrototype(attribute, callDetected, returnValue) {
     let script = "";
     for (let functionName of attribute.functionNames) {
-        script += "\r\n\ " + attribute.objectName + ".prototype." + functionName + " = function() {"
-            + callDetected
-            + returnValue + " };";
+        if (attribute.name === "Timezone") {
+            script += "\r\n " + attribute.objectName + ".prototype." + functionName + " = function() { " + callDetected + " " + returnValue + "};";
+        } else {
+            script += createScriptDefineGetter(attribute.objectName + ".prototype", functionName, callDetected, returnValue);
+        }
+
     }
     return script;
 }
 
-function createScriptDefineGetter(domObject, attributeKey, callDetected, returnValue) {
-    return "\r\n" + domObject + ".__defineGetter__('" + attributeKey + "', function() { "
-        + callDetected + " "
-        + returnValue + " });";
+function createScriptDefineGetter(domObject, propertyName, callDetected, returnValue) {
+    return "\r\nObject.defineProperty(" + domObject + ", '" + propertyName + "', {get: function() {"
+        + callDetected + returnValue + "} });";
+}
+
+function createScriptPrevetingFontDetection() {
+    let script = "";
+    return script;
 }
