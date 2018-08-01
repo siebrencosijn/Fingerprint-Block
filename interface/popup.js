@@ -1,11 +1,10 @@
 function init(webidentity, detection) {
     if (webidentity !== undefined) {
         document.querySelector("#domain").innerHTML = webidentity.domain;
-        initDetection(detection);
-        initThirdParties(webidentity.thirdparties);
-        initSocialPlugins(webidentity.socialplugins);
-        initBrowserPlugins(webidentity.browserplugins);
-        initWebsiteToggle(webidentity.enabled);
+        initAttributes(detection);
+        initThirdParties(webidentity);
+        initSocialPlugins(webidentity);
+        initWebsiteToggle(webidentity);
     } else {
         // no web identity for this tab
         // e.g. about:blank, about:newtab
@@ -13,7 +12,7 @@ function init(webidentity, detection) {
     }
 }
 
-function initDetection(detection) {
+function initAttributes(detection) {
     let attrSpoofedBlocked = 0;
     let length = 0;
     if (detection !== undefined) {
@@ -32,7 +31,8 @@ function initDetection(detection) {
         attrSpoofedBlocked + "/" + length;
 }
 
-function initThirdParties(thirdparties) {
+function initThirdParties(webidentity) {
+    let thirdparties = webidentity.thirdparties;
     let thirdpartiesBlocked = 0;
     let table = document.querySelector("#third-party-table");
     for (let thirdparty of thirdparties) {
@@ -65,7 +65,8 @@ function appendToTable(table, text, checked) {
     table.appendChild(tr);
 }
 
-function initSocialPlugins(socialplugins) {
+function initSocialPlugins(webidentity) {
+    let socialplugins = webidentity.socialplugins;
     let tr = document.querySelector("#social-plugins-tr");
     if (socialplugins.length === 0) {
         let td = document.createElement("td");
@@ -100,31 +101,27 @@ function initSocialPlugins(socialplugins) {
     }
 }
 
-function initBrowserPlugins(browserplugins) {
-    // TODO
-}
-
-function initWebsiteToggle(enabled) {
+function initWebsiteToggle(webidentity) {
     let websitetoggle = document.querySelector("#websiteonoffswitch");
-    websitetoggle.checked = enabled;
+    websitetoggle.checked = webidentity.enabled;
     websitetoggle.addEventListener("change", () => {
         browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {
             let tab = tabs[0];
             browser.runtime.sendMessage({
-                action: "toggle-webidentity",
+                action: "toggle-website",
                 content: {
-                    url: tab.url,
+                    domain: webidentity.domain,
                     enabled: websitetoggle.checked
                 }
             }).then(() => {
                 browser.tabs.reload(tab.id);
             });
         });
-   });
+    });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {
+    browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
         let url = tabs[0].url;
         browser.runtime.sendMessage({
             action: "get-webidentity-detection",

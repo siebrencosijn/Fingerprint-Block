@@ -5,47 +5,74 @@ import options from './options.js';
 import publicSuffix from '../utils/publicSuffix.js';
 import { getHostname } from '../utils/utils.js';
 
+const ACTIONS = {
+    "detection": detection,
+    "get-options": getOptions,
+    "set-options": setOptions,
+    "get-webidentity-detection": getWebidentityDetection,
+    "get-all-webidentities-detections": getWebidentitiesDetections,
+    "toggle-website": toggleWebsite,
+    "notificationButton": notificationButton
+};
+
 export default function messageListener(message, sender, sendResponse) {
-    if (message.action === "detection") {
-        detectionListener(message.content);
-    } else if (message.action === "get-options") {
-        sendResponse({ response: options.getAll() });
-    } else if (message.action === "set-options") {
-        options.setOptions(message.content);
-    } else if (message.action === "get-webidentity-detection") {
-        let domain = publicSuffix.getDomain(getHostname(message.content));
-        let webidentity = domain ? webIdentities.getWebIdentity(domain) : undefined;
-        let detection = detections.getDetection(domain);
-        sendResponse({
-            response: {
-                webidentity: webidentity,
-                detection: detection
-            }
-        });
-    } else if (message.action === "get-all-webidentities-detections") {
-        sendResponse({
-            response: {
-                webidentities: webIdentities.webidentities,
-                detections: detections.detections
-            }
-        });
-    } else if (message.action === "toggle-webidentity") {
-        let domain = publicSuffix.getDomain(getHostname(message.content.url));
-        let webidentity = webIdentities.getWebIdentity(domain);
-        webidentity.enabled = message.content.enabled;
-    } else if (message.action === "notificationButton") {
-        if (message.content === "keep") {
-            detections.getDetection(message.domain).notified = true;
-        } else if (message.content === "allow") {
-            let url = browser.extension.getURL("interface/webidentitiesPage.html");
-            browser.windows.create({
-                url: url,
-                type: 'panel',
-                height: 400,
-                width: 400
-            });
-            detections.getDetection(message.domain).notified = true;
-        }
-    }
+    ACTIONS[message.action]({
+        message: message,
+        sender: sender,
+        sendResponse: sendResponse
+    });
 }
 
+function detection(params) {
+    detectionListener(params.message.content);
+}
+
+function getOptions(params) {
+    params.sendResponse({ response: options.getAll() });
+}
+
+function setOptions(params) {
+    options.setOptions(params.message.content);
+}
+
+function getWebidentityDetection(params) {
+    let domain = publicSuffix.getDomain(getHostname(params.message.content));
+    let webidentity = domain ? webIdentities.getWebIdentity(domain) : undefined;
+    let detection = detections.getDetection(domain);
+    params.sendResponse({
+        response: {
+            webidentity: webidentity,
+            detection: detection
+        }
+    });
+}
+
+function getWebidentitiesDetections(params) {
+    params.sendResponse({
+        response: {
+            webidentities: webIdentities.webidentities,
+            detections: detections.detections
+        }
+    });
+}
+
+function toggleWebsite(params) {
+    let domain = params.message.content.domain;
+    let webidentity = webIdentities.getWebIdentity(domain);
+    webidentity.enabled = params.message.content.enabled;
+}
+
+function notificationButton(params) {
+    if (params.message.content === "keep") {
+        detections.getDetection(params.message.domain).notified = true;
+    } else if (params.message.content === "allow") {
+        let url = browser.extension.getURL("interface/webidentitiesPage.html");
+        browser.windows.create({
+            url: url,
+            type: 'panel',
+            height: 400,
+            width: 400
+        });
+        detections.getDetection(params.message.domain).notified = true;
+    }
+}
