@@ -24,7 +24,18 @@ function initAttributes(detection) {
             if (checked) {
                 attrSpoofedBlocked++;
             }
-            appendToTable(table, attribute.name, checked);
+            let checkbox = document.createElement("input");
+            let label = document.createElement("div");
+            checkbox.checked = checked;
+            checkbox.addEventListener("change", () => {
+                sendMessage("toggle-attribute", {
+                    domain: detection.domain,
+                    attribute: attribute.key,
+                    block: checkbox.checked
+                });
+            });
+            label.innerHTML = attribute.name;
+            appendToTable(table, checkbox, label);
         }
     }
     document.querySelector("#detected-attributes").innerHTML =
@@ -36,33 +47,25 @@ function initThirdParties(webidentity) {
     let thirdpartiesBlocked = 0;
     let table = document.querySelector("#third-party-table");
     for (let thirdparty of thirdparties) {
-        let checked = thirdparty.blocked;
+        let checked = thirdparty.block;
         if (checked) {
             thirdpartiesBlocked++;
         }
-        appendToTable(table, thirdparty.name, checked);
+        let checkbox = document.createElement("input");
+        let label = document.createElement("div");
+        checkbox.checked = checked;
+        checkbox.addEventListener("change", () => {
+            sendMessage("toggle-thirdparty", {
+                domain: webidentity.domain,
+                thirdparty: thirdparty.name,
+                block: checkbox.checked
+            });
+        });
+        label.innerHTML = thirdparty.name;
+        appendToTable(table, checkbox, label);
     }
     document.querySelector("#detected-third-parties").innerHTML =
         thirdpartiesBlocked + "/" + thirdparties.length;
-}
-
-function appendToTable(table, text, checked) {
-    let tr = document.createElement("tr");
-    let td1 = document.createElement("td");
-    let td2 = document.createElement("td");
-    let input = document.createElement("input");
-    let div = document.createElement("div");
-    td1.style.width = "30px"; // TODO add to css
-    input.type = "checkbox";
-    input.class = "checkbox";
-    input.checked = checked;
-    td1.appendChild(input);
-    div.class = "label";
-    div.innerHTML = text;
-    td2.appendChild(div);
-    tr.appendChild(td1);
-    tr.appendChild(td2);
-    table.appendChild(tr);
 }
 
 function initSocialPlugins(webidentity) {
@@ -105,19 +108,37 @@ function initWebsiteToggle(webidentity) {
     let websitetoggle = document.querySelector("#websiteonoffswitch");
     websitetoggle.checked = webidentity.enabled;
     websitetoggle.addEventListener("change", () => {
-        browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {
-            let tab = tabs[0];
-            browser.runtime.sendMessage({
-                action: "toggle-website",
-                content: {
-                    domain: webidentity.domain,
-                    enabled: websitetoggle.checked
-                }
-            }).then(() => {
-                browser.tabs.reload(tab.id);
-            });
+        sendMessage("toggle-website", {
+            domain: webidentity.domain,
+            enabled: websitetoggle.checked
         });
     });
+}
+
+function sendMessage(action, content) {
+    browser.runtime.sendMessage({
+        action: action,
+        content: content
+    }).then(() => {
+        browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
+            browser.tabs.reload(tabs[0].id);
+        });
+    });
+}
+
+function appendToTable(table, checkbox, label) {
+    let tr = document.createElement("tr");
+    let td1 = document.createElement("td");
+    let td2 = document.createElement("td");
+    td1.style.width = "30px"; // TODO add to css
+    checkbox.type = "checkbox";
+    checkbox.className = "checkbox";
+    label.className = "label";
+    td1.appendChild(checkbox);
+    td2.appendChild(label);
+    tr.appendChild(td1);
+    tr.appendChild(td2);
+    table.appendChild(tr);
 }
 
 document.addEventListener("DOMContentLoaded", () => {

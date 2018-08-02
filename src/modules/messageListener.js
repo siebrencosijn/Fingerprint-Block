@@ -11,6 +11,9 @@ const ACTIONS = {
     "set-options": setOptions,
     "get-webidentity-detection": getWebidentityDetection,
     "get-all-webidentities-detections": getWebidentitiesDetections,
+    "toggle-attribute": toggleAttribute,
+    "toggle-thirdparty": toggleThirdParty,
+    "toggle-socialplugin": toggleSocialPlugin,
     "toggle-website": toggleWebsite,
     "notificationButton": notificationButton
 };
@@ -54,6 +57,23 @@ function getWebidentitiesDetections(params) {
             detections: detections.detections
         }
     });
+}
+
+function toggleAttribute(params) {
+    // TODO
+}
+
+function toggleThirdParty(params) {
+    let content = params.message.content;
+    let webidentity = webIdentities.getWebIdentity(content.domain);
+    let thirdparty = webidentity.thirdparties.find(tp => tp.name === content.thirdparty);
+    if (thirdparty !== undefined) {
+        thirdparty.block = content.block;
+    }
+}
+
+function toggleSocialPlugin(params) {
+    // TODO
 }
 
 function toggleWebsite(params) {
