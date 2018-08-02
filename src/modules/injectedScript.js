@@ -5,7 +5,7 @@
 /********************************************/
 
 import detections from './detections.js';
-import { DOM_OBJECTS, SPOOF_ATTRIBUTES } from '../utils/constants.js';
+import { DOM_OBJECTS, ELEMENTS_PREVENTING_FONT_DETECTION, SPOOF_ATTRIBUTES } from '../utils/constants.js';
 
 const RETURN_UNDEFINED = "return (undefined);";
 
@@ -19,24 +19,20 @@ export default function injectedScript(webidentity) {
         + "direction: 'from-page-script', "
         + "message: {domain: domain, name: name, key: key, action: action} "
         + "}, '*') };"
-        + createScript(domain, detection, fingerprint)
+        + createScript(DOM_OBJECTS, domain, detection, fingerprint)
+        + createScriptPrevetingFontDetection(ELEMENTS_PREVENTING_FONT_DETECTION, domain, detection, fingerprint)
         + "\r\n</script>\r\n";
     return script;
 }
 
-function createScript(domain, detection, fingerprint) {
+function createScript(domObjects, domain, detection, fingerprint) {
     let script = "";
-    for (let domObjectKey in DOM_OBJECTS) {
-        let domObject = DOM_OBJECTS[domObjectKey];
+    for (let domObjectKey in domObjects) {
+        let domObject = domObjects[domObjectKey];
         for (let attributeKey in domObject) {
             let attribute = domObject[attributeKey],
                 attributeName = attribute.name,
-                attributeAction;
-            if (detection !== undefined && detection.containsAttribute(attributeName)) {
-                attributeAction = detection.getAttribute(attributeName).action;
-            } else {
-                attributeAction = SPOOF_ATTRIBUTES.includes(attributeName) ? "spoof" : "block";
-            }
+                attributeAction = getAttributeAction(detection, attributeName);
             if (attributeAction !== "allow") {
                 let callDetected = "detected('" + domain + "', '" + attributeName + "', '" + attributeKey + "', '" + attributeAction + "');";
                 let returnValue = RETURN_UNDEFINED;
@@ -56,7 +52,7 @@ function createScript(domain, detection, fingerprint) {
                 } else if (attribute.type === "prototype") {
                     let returnValue = RETURN_UNDEFINED;
                     if (domObjectKey === "HTMLElement") {
-                        returnValue = "return " + DOM_OBJECTS[domObjectKey][attributeKey].var + ";";
+                        returnValue = "return " + domObjects[domObjectKey][attributeKey].var + ";";
                     } else if (attributeAction === "spoof" && fingerprint) {
                         let fingerprintValue = fingerprint[domObjectKey][attributeKey];
                         if (attribute.typeOfValue === 'number' || fingerprintValue === 'undefined') {
@@ -66,15 +62,24 @@ function createScript(domain, detection, fingerprint) {
                         }
                     }
                     script += createScriptPrototype(attribute, callDetected, returnValue);
-                } else if (attribute.type === "plugins" || attribute.type === "mimeTypes") {
+                } else if (attribute.type === "array") {
                     let returnValue = "return [];"
                     script += createScriptDefineGetter(domObjectKey, attributeKey, callDetected, returnValue);
                 }
             }
         }
     }
-    script += createScriptPrevetingFontDetection();
     return script;
+}
+
+function getAttributeAction(detection, attributeName) {
+    let attributeAction = "block";
+    if (detection !== undefined && detection.containsAttribute(attributeName)) {
+        attributeAction = detection.getAttribute(attributeName).action;
+    } else if (SPOOF_ATTRIBUTES.includes(attributeName)) {
+        attributeAction = "spoof";
+    }
+    return attributeAction;
 }
 
 function createScriptStorage(domObject, callDetected, returnValue) {
@@ -107,7 +112,25 @@ function createScriptDefineGetter(domObject, propertyName, callDetected, returnV
         + callDetected + returnValue + "} });";
 }
 
-function createScriptPrevetingFontDetection() {
+function createScriptPrevetingFontDetection(domObjects, domain, detection, fingerprint) {
     let script = "";
+    script += "\r\nvar width=0; var height=0;"
+        + "\r\ndocument.addEventListener('DOMContentLoaded', () => {"
+        + "var h = document.getElementsByTagName('BODY')[0];"
+        + "var d = document.createElement('DIV');"
+        + "var s = document.createElement('SPAN');"
+        + "d.appendChild(s);"
+        + "d.style.fontFamily = 'sans';"
+        + "s.style.fontFamily = 'sans';"
+        + "s.style.fontSize = '72px';"
+        + "s.style.backgroundColor = 'white';"
+        + "s.style.color = 'white';"
+        + "s.innerHTML = 'mmmmmmmmmmlil';"
+        + "h.appendChild(d);"
+        + "width = s.offsetWidth;"
+        + "height = s.offsetHeight;"
+        + "h.removeChild(d);"
+        + "});";
+    script += createScript(domObjects, domain, detection, fingerprint);
     return script;
 }
