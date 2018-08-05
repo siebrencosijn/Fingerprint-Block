@@ -4,6 +4,7 @@ import detections from './detections.js';
 import options from './options.js';
 import publicSuffix from '../utils/publicSuffix.js';
 import { getHostname } from '../utils/utils.js';
+import { SPOOF_ATTRIBUTES } from '../utils/constants.js';
 
 const ACTIONS = {
     "detection": detection,
@@ -60,7 +61,20 @@ function getWebidentitiesDetections(params) {
 }
 
 function toggleAttribute(params) {
-    // TODO
+    let content = params.message.content;
+    let detection = detections.getDetection(content.domain);
+    let attribute = detection.getAttribute(content.attribute);
+    if (attribute !== undefined) {
+        if (content.block) {
+            if (SPOOF_ATTRIBUTES.includes(attribute.name)) {
+                attribute.action = "spoof";
+            } else {
+                attribute.action = "block";
+            }
+        } else {
+            attribute.action = "allow";
+        }
+    }
 }
 
 function toggleThirdParty(params) {
@@ -73,13 +87,18 @@ function toggleThirdParty(params) {
 }
 
 function toggleSocialPlugin(params) {
-    // TODO
+    let content = params.message.content;
+    let webidentity = webIdentities.getWebIdentity(content.domain);
+    let socialplugin = webidentity.socialplugins.find(sp => sp.name === content.socialplugin);
+    if (socialplugin !== undefined) {
+        socialplugin.block = content.block;
+    }
 }
 
 function toggleWebsite(params) {
-    let domain = params.message.content.domain;
-    let webidentity = webIdentities.getWebIdentity(domain);
-    webidentity.enabled = params.message.content.enabled;
+    let content = params.message.content;
+    let webidentity = webIdentities.getWebIdentity(content.domain);
+    webidentity.enabled = content.enabled;
 }
 
 function notificationButton(params) {

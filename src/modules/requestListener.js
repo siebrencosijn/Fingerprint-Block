@@ -1,4 +1,5 @@
 import webIdentities from './webIdentities.js';
+import detections from './detections.js';
 import options from './options.js';
 import publicSuffix from '../utils/publicSuffix.js';
 import { getHostname } from '../utils/utils.js';
@@ -31,9 +32,17 @@ export default async function requestListener(e) {
 function changeRequestHeaders(headers, webidentity) {
     const etags = ["if-match", "if-none-match", "if-range"];
     let http = webidentity.fingerprint.http;
+    let allow_ua = false;
+    let detection = detections.getDetection(webidentity.domain);
+    if (detection !== undefined) {
+        let ua = detection.getAttribute("user-agent");
+        if (ua !== undefined) {
+            allow_ua = ua.action === "allow";
+        }
+    }
     for (let header of headers) {
         let name = header.name.toLowerCase();
-        if (name === "user-agent") {
+        if (name === "user-agent" && !allow_ua) {
             header.value = http.userAgent;
         }
         if (name === "accept-encoding") {

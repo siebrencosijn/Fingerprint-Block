@@ -13,7 +13,7 @@ export const SOCIAL_PLUGINS = {
     linkedin: ["platform.linkedin.com/in.js"],
     tumblr: ["platform.tumblr.com/v1/", "api.tumblr.com/v1/", "api.tumblr.com/v2/"],
     pinterest: ["assets.pinterest.com/js/pinit.js", "assets.pinterest.com/js/pinit_main.js", "assets.pinterest.com/sdk/sdk.js"]
-}
+};
 
 export const SPOOF_ATTRIBUTES = [
     "App Code Name",
@@ -111,13 +111,13 @@ export const ELEMENTS_PREVENTING_FONT_DETECTION = {
             functionNames: ["offsetHeight"], var: "height"
         }
     }
-}
+};
 
 export const DEFAULT_OPTIONS = {
-        notify: true,
-        block_tpcookies: true,
-        dnt: true,
-        remove_etag: false,
-        block_social: true,
-        block_browser: true
-    }
+    notify: true,
+    block_tpcookies: true,
+    dnt: true,
+    remove_etag: false,
+    block_social: true,
+    block_browser: true
+};

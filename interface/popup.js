@@ -1,3 +1,6 @@
+/*
+ * Initializes the dynamic parts of the popup.
+ */
 function init(webidentity, detection) {
     if (webidentity !== undefined) {
         document.querySelector("#domain").innerHTML = webidentity.domain;
@@ -12,11 +15,15 @@ function init(webidentity, detection) {
     }
 }
 
+/*
+ * Initializes the attributes table.
+ */
 function initAttributes(detection) {
     let attrSpoofedBlocked = 0;
     let length = 0;
     if (detection !== undefined) {
         let table = document.querySelector("#attribute-table");
+        table.innerHTML = "";
         let attributes = detection.attributes;
         length = attributes.length;
         for (let attribute of attributes) {
@@ -30,7 +37,7 @@ function initAttributes(detection) {
             checkbox.addEventListener("change", () => {
                 sendMessage("toggle-attribute", {
                     domain: detection.domain,
-                    attribute: attribute.key,
+                    attribute: attribute.name,
                     block: checkbox.checked
                 });
             });
@@ -42,10 +49,14 @@ function initAttributes(detection) {
         attrSpoofedBlocked + "/" + length;
 }
 
+/*
+ * Initializes the third-parties table.
+ */
 function initThirdParties(webidentity) {
     let thirdparties = webidentity.thirdparties;
     let thirdpartiesBlocked = 0;
     let table = document.querySelector("#third-party-table");
+    table.innerHTML = "";
     for (let thirdparty of thirdparties) {
         let checked = thirdparty.block;
         if (checked) {
@@ -68,42 +79,60 @@ function initThirdParties(webidentity) {
         thirdpartiesBlocked + "/" + thirdparties.length;
 }
 
+/*
+ * Initializes the social-plugin icons.
+ */
 function initSocialPlugins(webidentity) {
+    const PATH = "interface/icons/";
     let socialplugins = webidentity.socialplugins;
     let tr = document.querySelector("#social-plugins-tr");
+    tr.innerHTML = "";
     if (socialplugins.length === 0) {
         let td = document.createElement("td");
         let div = document.createElement("div");
-        td.class = "plugins-logo";
+        td.className = "plugins-logo";
         td.style["padding-top"] = "10px"; // TODO add to css
-        div.class = "error-message";
+        div.className = "error-message";
         div.innerHTML = "No social plugins detected";
         td.appendChild(div);
         tr.appendChild(td);
     } else {
         for (let socialplugin of socialplugins) {
-            let name = socialplugin.name;
-            let td = document.createElement("td");
-            let img = document.createElement("img");
-            let src = "interface/icons/" + name;
-            let tooltip = name.charAt(0).toUpperCase() + name.slice(1);
-            if (socialplugin.block) {
-                src += "-blocked.png";
-                tooltip += " blocked - click to allow";
-            } else {
-                src += "-allowed.png";
-                tooltip += " allowed - click to block";
+            let td = document.createElement("td"),
+                img = document.createElement("img"),
+                name = socialplugin.name,
+                block = socialplugin.block,
+                src = PATH + name + "-blocked.png",
+                tooltip = name + " blocked - click to allow",
+                alt_src = PATH + name + "-allowed.png",
+                alt_tooltip =  name + " allowed - click to block";
+            if (!block) {
+                // swap variables
+                [src, alt_src] = [alt_src, src];
+                [tooltip, alt_tooltip] = [alt_tooltip, tooltip];
             }
-            img.src = browser.extension.getURL(src);
-            img.class = "button";
+            img.className = "button";
             img.id = name + "button";
+            img.src = browser.extension.getURL(src);
             img.tooltiptext = tooltip;
+            img.addEventListener("click", () => {
+                img.src = browser.extension.getURL(alt_src);
+                img.tooltiptext = alt_tooltip;
+                sendMessage("toggle-socialplugin", {
+                    domain: webidentity.domain,
+                    socialplugin: name,
+                    block: !block
+                });
+            });
             td.appendChild(img);
             tr.appendChild(td);
         }
     }
 }
 
+/*
+ * Initializes the on/off switch for the current website.
+ */
 function initWebsiteToggle(webidentity) {
     let websitetoggle = document.querySelector("#websiteonoffswitch");
     websitetoggle.checked = webidentity.enabled;
@@ -115,17 +144,9 @@ function initWebsiteToggle(webidentity) {
     });
 }
 
-function sendMessage(action, content) {
-    browser.runtime.sendMessage({
-        action: action,
-        content: content
-    }).then(() => {
-        browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
-            browser.tabs.reload(tabs[0].id);
-        });
-    });
-}
-
+/*
+ * Appends a checkbox and label to the table.
+ */
 function appendToTable(table, checkbox, label) {
     let tr = document.createElement("tr");
     let td1 = document.createElement("td");
@@ -141,7 +162,27 @@ function appendToTable(table, checkbox, label) {
     table.appendChild(tr);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+/*
+ * Sends a message to the background and
+ * reloads the current page and popup.
+ */
+function sendMessage(action, content) {
+    browser.runtime.sendMessage({
+        action: action,
+        content: content
+    }).then(() => {
+        browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
+            browser.tabs.reload(tabs[0].id);
+            load();
+        });
+    });
+}
+
+/*
+ * Gets the webidentity and detection for the domain
+ * of the current page and calls the init function.
+ */
+function load() {
     browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
         let url = tabs[0].url;
         browser.runtime.sendMessage({
@@ -153,6 +194,9 @@ document.addEventListener("DOMContentLoaded", () => {
             init(webidentity, detection);
         });
     });
-});
+}
 
+// call load() after DOM content is loaded
+document.addEventListener("DOMContentLoaded", load);
+// open options page when clicking on the settings wheel
 document.querySelector("#settings").addEventListener("click", () => browser.runtime.openOptionsPage());

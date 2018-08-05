@@ -20,7 +20,7 @@ export default function injectedScript(webidentity) {
         + "message: {domain: domain, name: name, key: key, action: action} "
         + "}, '*') };"
         + createScript(DOM_OBJECTS, domain, detection, fingerprint)
-        + createScriptPrevetingFontDetection(ELEMENTS_PREVENTING_FONT_DETECTION, domain, detection, fingerprint)
+        + createScriptPreventingFontDetection(ELEMENTS_PREVENTING_FONT_DETECTION, domain, detection, fingerprint)
         + "\r\n</script>\r\n";
     return script;
 }
@@ -112,7 +112,7 @@ function createScriptDefineGetter(domObject, propertyName, callDetected, returnV
         + callDetected + returnValue + "} });";
 }
 
-function createScriptPrevetingFontDetection(domObjects, domain, detection, fingerprint) {
+function createScriptPreventingFontDetection(domObjects, domain, detection, fingerprint) {
     let script = "";
     script += "\r\nvar width=0; var height=0;"
         + "\r\ndocument.addEventListener('DOMContentLoaded', () => {"

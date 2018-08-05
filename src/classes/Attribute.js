@@ -5,4 +5,4 @@ class Attribute {
         this.action = action;
     }
 }
-export default  Attribute;
+export default Attribute;
