@@ -22,7 +22,7 @@ class Leaf extends Node {
 
 class Tree {
     constructor(fingerprints) {
-        let priorityQueue = new PriorityQueue(x => x.value);
+        let priorityQueue = new PriorityQueue((x, y) => x.value < y.value);
         for (let i = 0; i < fingerprints.length; i++) {
             priorityQueue.insert(new Leaf(i, fingerprints[i].weight));
         }

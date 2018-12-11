@@ -2,9 +2,9 @@
  * Heap based priority queue.
  */
 class PriorityQueue {
-    constructor(valueFunc = x => x) {
+    constructor(comparator = (x, y) => x < y) {
         this._heap = [];
-        this._valueFunc = valueFunc;
+        this._comparator = comparator;
     }
 
     get size() {
@@ -31,39 +31,38 @@ class PriorityQueue {
         while (index > 0) {
             let parentIndex = PriorityQueue._parentIndex(index);
             let parent = this._heap[parentIndex];
-            if (this._valueFunc(item) >= this._valueFunc(parent))
+            if (!this._comparator(item, parent))
                 break;
-            this._heap[parentIndex] = item;
             this._heap[index] = parent;
             index = parentIndex;
         }
+        this._heap[index] = item;
     }
 
     _bubbleDown(index) {
         let item = this._heap[index];
-        let itemValue = this._valueFunc(item);
         while (true) {
             let leftIndex = PriorityQueue._leftIndex(index);
             let rightIndex = PriorityQueue._rightIndex(index);
             let swap = null;
             if (leftIndex < this.size) {
                 let left = this._heap[leftIndex];
-                if (this._valueFunc(left) < itemValue) {
+                if (this._comparator(left, item)) {
                     swap = leftIndex;
                 }
             }
             if (rightIndex < this.size) {
                 let right = this._heap[rightIndex];
-                if (this._valueFunc(right) < (swap == null ? itemValue : this._valueFunc(swap))) {
+                if (this._comparator(right, (swap === null ? item : this._heap[swap]))) {
                     swap = rightIndex;
                 }
             }
-            if (swap == null)
+            if (swap === null)
                 break;
             this._heap[index] = this._heap[swap];
-            this._heap[swap] = item;
             index = swap;
         }
+        this._heap[index] = item;
     }
 
     static _parentIndex(i) {
