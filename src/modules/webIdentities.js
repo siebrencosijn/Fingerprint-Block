@@ -56,7 +56,7 @@ let webIdentities = {
      * Add a web identity to the array of web identities.
      */
     addWebIdentity(webidentity) {
-        this.webidentities.push(webidentity)
+        this.webidentities.push(webidentity);
     },
 
     /*
@@ -71,5 +71,5 @@ let webIdentities = {
             }
         }
     }
-}
+};
 export default webIdentities;

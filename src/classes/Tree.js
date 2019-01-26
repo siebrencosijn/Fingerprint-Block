@@ -1,93 +1,181 @@
-class Node {
-    constructor(value, left = null, right = null) {
+const LEFT = 0;
+const RIGHT = 1;
+
+/**
+ * Class representing a weighted node.
+ */
+class TreeNode {
+    /**
+     * Create a node.
+     * @param {*} value - Value of the node.
+     * @param {number} weight - Weight of the node.
+     */
+    constructor(value, weight) {
         this.value = value;
+        this.weight = weight;
+        this.sum = weight;
+        this.size = 1;
         this.parent = null;
-        this.left = left;
-        this.right = right;
-        if (left !== null) {
-            left.parent = this;
-        }
-        if (right !== null) {
-            right.parent = this;
-        }
-    }
-}
-
-class Leaf extends Node {
-    constructor(index, value) {
-        super(value);
-        this.index = index;
-    }
-}
-
-class Tree {
-    constructor(fingerprints) {
-        let priorityQueue = new PriorityQueue((x, y) => x.value < y.value);
-        for (let i = 0; i < fingerprints.length; i++) {
-            priorityQueue.insert(new Leaf(i, fingerprints[i].weight));
-        }
-        while (priorityQueue.size > 1) {
-            let left = priorityQueue.pop();
-            let right = priorityQueue.pop();
-            let parent = new Node(left.value + right.value, left, right);
-            priorityQueue.insert(parent);
-        }
-        this.root = priorityQueue.size === 1 ? priorityQueue.pop() : null;
+        this.children = [null, null];
     }
 
     /**
-     * Delete a leaf node from the tree and swap its parent with its sibling.
+     * Return the size of the child node with given direction.
+     * @param {number} dir - The direction (0 = left, 1 = right).
+     * @return {number} Size of the child node.
      */
-    delete(node) {
-        if (node === this.root) {
-            this.root = null;
+    cSize(dir) {
+        return this.children[dir] !== null ? this.children[dir].size : 0;
+    }
+
+    /**
+     * Return the sum of the child node with given direction.
+     * @param {number} dir - The direction (0 = left, 1 = right).
+     * @return {number} Sum of the child node.
+     */
+    cSum(dir) {
+        return this.children[dir] !== null ? this.children[dir].sum : 0;
+    }
+
+    /**
+     * Update the size and sum of the node.
+     */
+    update() {
+        this.size = 1 + this.cSize(LEFT) + this.cSize(RIGHT);
+        this.sum = this.weight + this.cSum(LEFT) + this.cSum(RIGHT);
+    }
+
+    /**
+     * Print a graphical representation of this node and its children to the console.
+     */
+    print(prefix = "", isTail = true) {
+        console.log(prefix + (isTail ? "└── " : "├── ") + this.value);
+        if (this.children[LEFT] !== null && this.children[RIGHT] !== null) {
+            this.children[LEFT].print(prefix + (isTail ? "    " : "│   "), false);
+            this.children[RIGHT].print(prefix + (isTail ? "    " : "│   "), true);
+        } else if (this.children[LEFT] !== null) {
+            this.children[LEFT].print(prefix + (isTail ? "    " : "│   "), true);
+        } else if (this.children[RIGHT] !== null) {
+            this.children[RIGHT].print(prefix + (isTail ? "    " : "│   "), true);
+        }
+    }
+}
+
+/**
+ * Class representing a binary tree with weighted nodes.
+ */
+class Tree {
+    /**
+     * Create an empty tree.
+     */
+    constructor() {
+        this.root = null;
+    }
+
+    /**
+     * Insert a new node into the tree.
+     * @param {*} value - Value of the node.
+     * @param {number} weight - Weight of the node.
+     */
+    insert(value, weight) {
+        let n = new TreeNode(value, weight);
+        let c = this.root;
+        let p = null;
+        let dir;
+        while (c !== null) {
+            p = c; 
+            p.size++;
+            p.sum += weight;
+            dir = p.cSize(LEFT) <= p.cSize(RIGHT) ? LEFT : RIGHT;
+            c = p.children[dir];
+        }
+        if (p === null) {
+            this.root = n;
         } else {
-            let value = node.value,
-                parent = node.parent,
-                parentofparent = parent.parent,
-                sibling;
-            if (node === parent.left) {
-                sibling = parent.right;
-            } else {
-                sibling = parent.left;
+            p.children[dir] = n;
+            n.parent = p;
+        }
+    }
+
+    /**
+     * Delete a node from the tree.
+     * @param {TreeNode} n - The node.
+     */
+    delete(n) {
+        let l = n.children[LEFT];
+        let r = n.children[RIGHT];
+        if (l !== null && r !== null) {
+            // two children
+            let c = l.size > r.size ? l : r;
+            while (c.children[LEFT] !== null || c.children[RIGHT] !== null) {
+                let dir = c.cSize(LEFT) > c.cSize(RIGHT) ? LEFT : RIGHT;
+                c = c.children[dir];
             }
-            sibling.parent = parentofparent;
-            if (parentofparent !== null) {
-                if (parent === parentofparent.left) {
-                    parentofparent.left = sibling;
+            n.value = c.value;
+            n.weight = c.weight;
+            this._remove(c);
+        } else if (l !== null) {
+            // only left child
+            this._remove(n, l);
+        } else if (r !== null) {
+            // only right child
+            this._remove(n, r);
+        } else {
+            // no children
+            this._remove(n);
+        }
+    }
+
+    /**
+     * Remove a node from the tree by replacing it with null or another node.
+     * @param {TreeNode} n - The node to be removed.
+     * @param {TreeNode} replacement - The replacement.
+     */
+    _remove(n, replacement = null) {
+        let p = n.parent;
+        if (p === null) {
+            this.root = replacement;
+        } else {
+            if (n === p.children[LEFT]) {
+                p.children[LEFT] = replacement;
+            } else {
+                p.children[RIGHT] = replacement;
+            }
+        }
+        if (replacement !== null) {
+            replacement.parent = p;
+        }
+        while (p !== null) {
+            p.update();
+            p = p.parent;
+        }
+    }
+
+    /**
+     * Return the value of a random node from the tree and delete the node.
+     * @return {*} Value of the node.
+     */
+    random() {
+        let curr = this.root;
+        if (curr === null) {
+            return null;
+        }
+        let r = Math.random() * curr.sum;
+        while (true) {
+            if (curr.cSum(LEFT) < r) {
+                r -= curr.cSum(LEFT);
+                if (r < curr.weight) {
+                    let val = curr.value;
+                    this.delete(curr);
+                    return val;
                 } else {
-                    parentofparent.right = sibling;
+                    r -= curr.weight;
+                    curr = curr.children[RIGHT];
                 }
             } else {
-                this.root = sibling;
-            }
-            while (sibling.parent !== null) {
-                sibling = sibling.parent;
-                sibling.value -= value;
+                curr = curr.children[LEFT];
             }
         }
-    }
-
-    /**
-     * Return the index of a random fingerprint. Deletes the node of that fingerprint.
-     */
-    generate() {
-        let current = this.root;
-        if (current === null)
-            return undefined;
-        let r = Math.random() * current.value;
-        while (current.left !== null || current.right !== null) {
-            if (r < current.left.value) {
-                current = current.left;
-            } else {
-                r -= current.left.value;
-                current = current.right;
-            }
-        }
-        let index = current.index;
-        this.delete(current);
-        return index;
     }
 }
-
 export default Tree;
