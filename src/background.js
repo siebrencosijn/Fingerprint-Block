@@ -3,6 +3,7 @@ import requestListener from './modules/requestListener.js';
 import responseListener from './modules/responseListener.js';
 import messageListener  from './modules/messageListener.js';
 import options from './modules/options.js';
+import fingerprintGenerator from './modules/fingerprintGenerator.js';
 import publicSuffix from './utils/publicSuffix.js';
 import { readFile } from './utils/utils.js';
 
@@ -13,6 +14,9 @@ readFile('../data/public_suffix_list.dat', (list) => {
 
 // Load options
 options.loadOptions();
+
+// Load fingerprint generator
+//fingerprintGenerator.load();
 
 // Load web identities
 webIdentities.loadWebIdentities();

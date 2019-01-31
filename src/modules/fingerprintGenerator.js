@@ -1,20 +1,21 @@
 import Tree from '../classes/Tree.js';
+import { readFile } from '../utils/utils.js';
 
 let fingerprintGenerator = {
     /**
      * Load the data from browser local storage,
      * or call initialize if this is the first run.
      */
-    load() {
+    async load() {
         let first = false;
-        browser.storage.local.get("fingerprints").then(function(result) {
+        await browser.storage.local.get("fingerprints").then(function(result) {
             if (Object.getOwnPropertyNames(result).length != 0) {
                 this.fingerprints = result;
             } else {
                 first = true;
             }
         });
-        browser.storage.local.get("tree").then(function(result) {
+        await browser.storage.local.get("tree").then(function(result) {
             if (Object.getOwnPropertyNames(result).length != 0) {
                 this.tree = result;
             } else {
@@ -38,7 +39,16 @@ let fingerprintGenerator = {
      * Initialize the data needed to generate fingerprints.
      */
     initialize() {
-        this.tree = new Tree(this.fingerprints);
+        const path = "/fingerprints/fingerprints.json";
+        readFile(path, (file) => {
+            this.fingerprints = JSON.parse(file);
+            this.tree = new Tree();
+            for (let i = 0; i < this.fingerprints.length; i++) {
+                this.tree.insert(this.fingerprints[i].index,
+                                 this.fingerprints[i].weight);
+            }
+            this.save();
+        });
     },
 
     /**
