@@ -12,6 +12,7 @@
         "webNavigation",
         "tabs",
         "storage",
+        "unlimitedStorage",
         "notifications"
     ],
 

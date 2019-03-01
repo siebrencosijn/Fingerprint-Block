@@ -165,9 +165,9 @@ class Tree {
             if (curr.cSum(LEFT) < r) {
                 r -= curr.cSum(LEFT);
                 if (r < curr.weight) {
-                    let val = curr.value;
+                    let ret = {value: curr.value, weight: curr.weight};
                     this.delete(curr);
-                    return val;
+                    return ret;
                 } else {
                     r -= curr.weight;
                     curr = curr.children[RIGHT];

@@ -14,7 +14,7 @@ let options = {
             } else {
                 this.options = DEFAULT_OPTIONS;
             }
-        })
+        });
     },
 
     /*
