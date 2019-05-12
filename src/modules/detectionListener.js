@@ -2,7 +2,8 @@ import options from "./options.js";
 import detections from "./detections.js";
 import Detection from "../classes/Detection.js";
 import Attribute from "../classes/Attribute.js";
-import {DOM_OBJECTS} from "../utils/constants.js";
+import webIdentities from './webIdentities.js';
+import { ELEMENTS_PREVENTING_CANVAS_FINGERPRINTING } from "../utils/constants.js";
 
 /********************************************/
 /* -- Fingerprint Privacy --                */
@@ -17,8 +18,7 @@ export default function detectionListener(message) {
     let detection = detections.getDetection(domain);
 
     if (detection === undefined) {
-        let canvas = { detected: false, colors: 0, width: 0, height: 0, format: null };
-        detection = new Detection(domain, canvas, false);
+        detection = new Detection(domain, false);
         detections.addDetection(detection);
     }
 
@@ -26,6 +26,13 @@ export default function detectionListener(message) {
         let attributeAction = message.action;
         let attributeKey = message.key;
         detection.addAttribute(new Attribute(attributeName, attributeKey, attributeAction));
+        if(attributeName.indexOf(ELEMENTS_PREVENTING_CANVAS_FINGERPRINTING["HTMLCanvasElement"]["toDataURL"].name) != -1) {
+            let webidentity = domain ? webIdentities.getWebIdentity(domain) : undefined;
+            let fingerprint = webidentity ? webidentity.fingerprint : undefined;
+            if( !!fingerprint && !!fingerprint.canvasData && !!message.data ) {
+                fingerprint.canvasData.data = message.data;
+            } 
+        }
         detection.notified = false;
     }
 

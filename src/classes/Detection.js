@@ -1,7 +1,6 @@
 class Detection {
-    constructor(domain, canvas, notified) {
+    constructor(domain, notified) {
         this.domain = domain;
-        this.canvas = canvas;
         this.notified = notified;
         this.attributes = [];
     }

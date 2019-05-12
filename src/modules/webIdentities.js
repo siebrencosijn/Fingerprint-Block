@@ -57,6 +57,7 @@ let webIdentities = {
      */
     addWebIdentity(webidentity) {
         this.webidentities.push(webidentity);
+        determineDefaultHTMLElementDimension(webidentity.domain);
     },
 
     /*
@@ -73,3 +74,16 @@ let webIdentities = {
     }
 };
 export default webIdentities;
+
+function determineDefaultHTMLElementDimension(domain) {
+    browser.tabs.query({ currentWindow: true, active: true }).then(
+        tabs => {
+            for (let tab of tabs) {
+                browser.tabs.sendMessage(
+                    tab.id,
+                    { message: "", action: "determineDefaultHTMLElementDimension", domain: domain }
+                );
+            }
+        }
+    );
+}

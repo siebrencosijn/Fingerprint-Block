@@ -2,6 +2,7 @@ import Fingerprint from '../classes/Fingerprint.js';
 import random from '../utils/random.js';
 import profiles from './profiles.js';
 import webIdentities from './webIdentities.js';
+import FONT_LIST from '../../data/fontList_data.js';
 
 /*
  * Construct a random user agent string for the profile's browser.
@@ -147,6 +148,38 @@ function getRandomScreenObject(profile) {
 }
 
 /*
+* Return data for preventing font probibing
+*/
+function getRandomFontData() {
+    let fontData = {defaultWidth: 0, defaultHeight: 0, allowedFonts: []};
+    let fontList = getRandomFontList();
+    fontList.forEach(fontname => {
+        let font = {};
+        font.name = fontname;
+        font.height = random(1,10);
+        font.width = random(1,10);
+        fontData.allowedFonts.push(font);
+    });
+    return fontData;
+}
+
+function getRandomFontList() {
+    let numberAllowedFonts = random(2, 5);
+    let numberFonts = FONT_LIST.length
+    let fontList = [];
+    let indices = [];
+    for (let i = 0; i < numberAllowedFonts; i++) {
+        let index = random(0, numberFonts-1);
+        while(indices.includes(index)) {
+            index = random(0, numberFonts-1);
+        }
+        indices.push(index);
+        fontList.push(FONT_LIST[index]);
+    }
+    return fontList;
+}
+
+/*
  * Check if the fingerprint is not used for another web identity.
  */
 function checkUniqueness(generatedFingerprint, webIdentities) {
@@ -168,8 +201,10 @@ let randomFingerprintGenerator = {
             httpObject = { userAgent: useragent, acceptEncoding: profile.http.encoding, acceptLanguage: language },
             navigatorObject = getRandomNavigatorObject(profile, os, proc, language, useragent),
             screenObject = getRandomScreenObject(profile),
-            dateObject = { timezoneOffset: random(profile.timezones) };
-        return new Fingerprint(httpObject, navigatorObject, screenObject, dateObject);
+            dateObject = { timezoneOffset: random(profile.timezones) },
+            fontData = getRandomFontData(),
+            canvasData = { data: null };
+        return new Fingerprint(httpObject, navigatorObject, screenObject, dateObject, fontData, canvasData);
     },
 
     generate() {

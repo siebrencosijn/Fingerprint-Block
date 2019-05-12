@@ -39,79 +39,97 @@ export const SPOOF_ATTRIBUTES = [
 
 export const DOM_OBJECTS = {
     navigator: {
-        appCodeName: { name: "App Code Name", type: "direct", typeOfValue: "string" },
-        appName: { name: "App Name", type: "direct", typeOfValue: "string" },
-        appVersion: { name: "App version", type: "direct", typeOfValue: "string" },
-        battery: { name: "Battery", type: "direct", typeOfValue: "string" },
-        connection: { name: "Connection", type: "misc", typeOfValue: "string" },
-        cookieEnabled: { name: "Cookie enabled", type: "direct", typeOfValue: "string" },
-        geolocation: { name: "Geolocation", type: "direct", typeOfValue: "string" },
-        language: { name: "Language", type: "direct", typeOfValue: "string" },
-        mimeTypes: { name: "Mime Types", type: "array", typeOfValue: "array" },
-        onLine: { name: "Online", type: "direct", typeOfValue: "string" },
-        oscpu: { name: "OS CPU", type: "direct", typeOfValue: "string" },
-        platform: { name: "Platform", type: "direct", typeOfValue: "string" },
-        plugins: { name: "Plugins", type: "array", typeOfValue: "array" },
-        product: { name: "Product", type: "direct", typeOfValue: "string" },
-        userAgent: { name: "User-Agent", type: "direct", typeOfValue: "string" },
-        buildID: { name: "BuildID", type: "direct", typeOfValue: "string" },
-        doNotTrack: { name: "Do Not Track", type: "direct", typeOfValue: "string" },
-        productSub: { name: "Product Subversion", type: "direct", typeOfValue: "string" },
-        vendor: { name: "Vendor", type: "direct", typeOfValue: "string" },
-        vendorSub: { name: "Vendor Subversion", type: "direct", typeOfValue: "string" },
-        mozBattery: { name: "MozBattery", type: "direct", typeOfValue: "string" },
-        cpuClass: { name: "CPU Class", type: "direct", typeOfValue: "string" },
-        systemLanguage: { name: "System Language", type: "direct", typeOfValue: "string" },
-        userLanguage: { name: "User Language", type: "direct", typeOfValue: "string" },
-        securityPolicy: { name: "IE Security Policy", type: "direct", typeOfValue: "string" }
+        appCodeName:    { name: "App Code Name", accessType: "objectProperty", valueType: "string" },
+        appName:        { name: "App Name", accessType: "objectProperty", valueType: "string" },
+        appVersion:     { name: "App version", accessType: "objectProperty", valueType: "string" },
+        battery:        { name: "Battery", accessType: "objectProperty", valueType: "string" },
+        connection:     { name: "Connection", accessType: "misc", valueType: "string" },
+        cookieEnabled:  { name: "Cookie enabled", accessType: "objectProperty", valueType: "string" },
+        geolocation:    { name: "Geolocation", accessType: "objectProperty", valueType: "string" },
+        language:       { name: "Language", accessType: "objectProperty", valueType: "string" },
+        mimeTypes:      { name: "Mime Types", accessType: "objectProperty", valueType: "array" },
+        onLine:         { name: "Online", accessType: "objectProperty", valueType: "string" },
+        oscpu:          { name: "OS CPU", accessType: "objectProperty", valueType: "string" },
+        platform:       { name: "Platform", accessType: "objectProperty", valueType: "string" },
+        plugins:        { name: "Plugins", accessType: "objectProperty", valueType: "array" },
+        product:        { name: "Product", accessType: "objectProperty", valueType: "string" },
+        userAgent:      { name: "User-Agent", accessType: "objectProperty", valueType: "string" },
+        buildID:        { name: "BuildID", accessType: "objectProperty", valueType: "string" },
+        doNotTrack:     { name: "Do Not Track", accessType: "objectProperty", valueType: "string" },
+        productSub:     { name: "Product Subversion", accessType: "objectProperty", valueType: "string" },
+        vendor:         { name: "Vendor", accessType: "objectProperty", valueType: "string" },
+        vendorSub:      { name: "Vendor Subversion", accessType: "objectProperty", valueType: "string" },
+        mozBattery:     { name: "MozBattery", accessType: "objectProperty", valueType: "string" },
+        cpuClass:       { name: "CPU Class", accessType: "objectProperty", valueType: "string" },
+        systemLanguage: { name: "System Language", accessType: "objectProperty", valueType: "string" },
+        userLanguage:   { name: "User Language", accessType: "objectProperty", valueType: "string" },
+        // securityPolicy: { name: "IE Security Policy", type: "objectProperty", valueType: "string" }
     },
     screen: {
-        availHeight: { name: "Available Height", type: "direct", typeOfValue: "number" },
-        availWidth: { name: "Available Width", type: "direct", typeOfValue: "number" },
-        colorDepth: { name: "Color depth", type: "direct", typeOfValue: "number" },
-        height: { name: "Screen Height", type: "direct", typeOfValue: "number" },
-        width: { name: "Screen Width", type: "direct", typeOfValue: "number" },
-        pixelDepth: { name: "Pixel Depth", type: "direct", typeOfValue: "number" }
+        availHeight:{ name: "Available Height", accessType: "objectProperty", valueType: "number" },
+        availWidth: { name: "Available Width", accessType: "objectProperty", valueType: "number" },
+        colorDepth: { name: "Color depth", accessType: "objectProperty", valueType: "number" },
+        height:     { name: "Screen Height", accessType: "objectProperty", valueType: "number" },
+        width:      { name: "Screen Width", accessType: "objectProperty", valueType: "number" },
+        pixelDepth: { name: "Pixel Depth", accessType: "objectProperty", valueType: "number" }
     },
-    date: {
+    Date: {
         timezoneOffset: {
-            name: "Timezone", type: "prototype", objectName: "Date",
-            functionNames: ["getTimezoneOffset"], typeOfValue: "number"
+            name: "Timezone", accessType: "prototypeFunction",
+            functionNames: ["getTimezoneOffset"], valueType: "number"
         }
     },
     window: {
         localStorage: {
-            name: "DOM Local Storage", type: "storage", objectName: "localStorage",
+            name: "DOM Local Storage", accessType: "objectProperty", valueType: "storageObject",
             functionNames: ["key", "getItem", "setItem", "removeItem"]
         },
         sessionStorage: {
-            name: "DOM Session Storage", type: "storage", objectName: "sessionStorage",
+            name: "DOM Session Storage", accessType: "objectProperty", valueType: "storageObject",
             functionNames: ["key", "getItem", "setItem", "removeItem"]
         },
-        indexedDB: { name: "IndexedDB", type: "direct" },
-        openDatabase: { name: "OpenDatabase", type: "direct" }
-    },
-
-    Element: {
-        ieUserData: {
-            name: "IE userData", type: "prototype", objectName: "Element",
-            functionNames: ["addBehavior", "save", "load"]
+        WebGLRenderingContext: {
+            name: "WebGL Rendering Context", accessType: "objectProperty", valueType: "object"
         }
-    }
+        //indexedDB: { name: "IndexedDB", accessType: "objectProperty" },
+        //openDatabase: { name: "OpenDatabase", accessType: "objectProperty" }
+   }
+
+    // Element: {
+    //     ieUserData: {
+    //         name: "IE userData", accessType: "prototype", objectName: "Element",
+    //         functionNames: ["addBehavior", "save", "load"]
+    //     }
+    // }
 };
 
 export const ELEMENTS_PREVENTING_FONT_DETECTION = {
     HTMLElement: {
         offsetWidth: {
-            name: "Element Offset Width", type: "prototype", objectName: "HTMLElement",
-            functionNames: ["offsetWidth"], var: "width"
-        },
+            name: "Element Offset Width", accessType: "prototypeProperty", valueType: "number"},
         offsetHeight: {
-            name: "Element Offset Height", type: "prototype", objectName: "HTMLElement",
-            functionNames: ["offsetHeight"], var: "height"
-        }
+            name: "Element Offset Height", accessType: "prototypeProperty", valueType: "number"}
     }
 };
+
+export const ELEMENTS_PREVENTING_CANVAS_FINGERPRINTING = {
+    CanvasRenderingContext2D: {
+        fillText: {
+            name: "Canvas Fill Text", accessType: "prototypeFunction",
+            functionNames: ["fillText"], valueType: "undefied"
+        },
+        strokeText: {
+            name: "Canvas Stroke Text", accessType: "prototypeFunction",
+            functionNames: ["strokeText"], valueType: "undefied"
+        }
+    },
+    HTMLCanvasElement: {
+        toDataURL: {
+            name: "Canvas To Data URL", accessType: "prototypeFunction",
+            functionNames: ["toDataURL"], valueType: "string"
+        }
+    }
+}
 
 export const DEFAULT_OPTIONS = {
     notify: true,

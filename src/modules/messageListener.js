@@ -6,6 +6,8 @@ import publicSuffix from '../utils/publicSuffix.js';
 import { getHostname } from '../utils/utils.js';
 import { SPOOF_ATTRIBUTES } from '../utils/constants.js';
 
+import random from '../utils/random.js';
+
 const ACTIONS = {
     "detection": detection,
     "get-options": getOptions,
@@ -16,7 +18,8 @@ const ACTIONS = {
     "toggle-thirdparty": toggleThirdParty,
     "toggle-socialplugin": toggleSocialPlugin,
     "toggle-website": toggleWebsite,
-    "notificationButton": notificationButton
+    "notificationButton": notificationButton,
+    "setDimentionOfHTMLElement" : setDimentionOfHTMLElement
 };
 
 export default function messageListener(message, sender, sendResponse) {
@@ -113,5 +116,20 @@ function notificationButton(params) {
             width: 400
         });
         detections.getDetection(params.message.domain).notified = true;
+    }
+}
+
+function setDimentionOfHTMLElement(params) {
+    let dimension = params.message.content;
+    let domain = params.message.domain;
+    let webidentity = domain ? webIdentities.getWebIdentity(domain) : undefined;
+    let fingerprint = webidentity ? webidentity.fingerprint : undefined;
+    if(!!fingerprint && !!fingerprint.fontData) {
+        fingerprint.fontData.defaultHeight = dimension.height; 
+        fingerprint.fontData.defaultWidth = dimension.width;
+        fingerprint.fontData.allowedFonts.forEach(font => {
+            font.height = dimension.height + random(1, 10);
+            font.width = dimension.width + random(1,10);
+        });       
     }
 }

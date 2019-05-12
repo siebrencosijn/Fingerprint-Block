@@ -1,11 +1,13 @@
 import murmurhash3_32_gc from '../utils/murmurhash.js';
 
 class Fingerprint {
-    constructor(http, navigator, screen, date) {
+    constructor(http, navigator, screen, date, fontData, canvasData) {
         this.http = http;
         this.navigator = navigator;
         this.screen = screen;
         this.date = date;
+        this.fontData = fontData;
+        this.canvasData = canvasData;
         this.hash = this._generateHash();
     }
 
