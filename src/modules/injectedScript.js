@@ -102,7 +102,7 @@ function createScriptPrototype(domObjectKey, attributeKey, attribute, functionBo
 
 function createScriptDefineProperty(domObject, propertyName, functionBody, returnStatement) {
     return "\r\nObject.defineProperty(" + domObject + ", '" + propertyName + "', {get: function() {"
-        + functionBody + returnStatement + "} });";
+        + functionBody + returnStatement + "}, enumerable: true });";
 }
 
 function createScriptPreventingFontDetection(domObjects, domain, detection, fingerprint) {
@@ -144,7 +144,7 @@ function createScriptPreventingCanvasFingerprinting(domObjects, domain, detectio
     let attribute, attributeKey, attributeAction, functionBody, returnStatement, originalFunction;
     let domObjectsKeys = Object.keys(domObjects);
     
-    // // functions from canvasRenderingContext2D-object
+    // Functions from canvasRenderingContext2D-object
     let canvasRenderingObjectKey = domObjectsKeys[0];
     let canvasRenderingObject = domObjects[canvasRenderingObjectKey];
     for(attributeKey in canvasRenderingObject) {
