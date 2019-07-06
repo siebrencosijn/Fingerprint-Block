@@ -1,6 +1,9 @@
 import Tree from '../classes/Tree.js';
 import Fingerprint from '../classes/Fingerprint.js';
 import DATA from '../../data/browser_data.js';
+import db from './database.js';
+import FONT_LIST from '../../data/fontList_data.js';
+import random from '../utils/random.js';
 
 let fingerprintGenerator = {
     /**
@@ -21,11 +24,12 @@ let fingerprintGenerator = {
         }
     },
 
-    /**
-     * Save the data to browser local storage.
-     */
-    save() {
-        //browser.storage.local.set({"tree": this.tree});
+    save(i) {
+        // TODO
+    },
+
+    saveAll() {
+        db.set(this.tree.tree, db.DB_STORE_TREE);
     },
 
     /**
@@ -34,7 +38,9 @@ let fingerprintGenerator = {
      */
     generate() {
         let r = this.tree.random();
-        return new Fingerprint(r.value, r.weight);
+        let fontData = getRandomFontData();
+        let canvasData = { data: null };
+        return new Fingerprint(r.value, r.weight, fontData, canvasData);
     },
 
     /**
@@ -43,11 +49,13 @@ let fingerprintGenerator = {
     init() {
         let fps = [];
         this._init_browser_attr(fps);
-        this.tree = new Tree();
+        let h = Math.ceil(Math.log2(fps.length + 1)) - 1;
+        let s = Math.pow(2, h + 1) - 1;
+        this.tree = new Tree(s);
         for (let fp of fps) {
             this.tree.insert(fp.id, fp.w);
         }
-        this.save();
+        this.saveAll();
     },
 
     _init_browser_attr(fps) {
@@ -86,3 +94,35 @@ let fingerprintGenerator = {
     }
 };
 export default fingerprintGenerator;
+
+/*
+* Return data for preventing font probibing
+*/
+function getRandomFontData() {
+    let fontData = {defaultWidth: 0, defaultHeight: 0, allowedFonts: []};
+    let fontList = getRandomFontList();
+    fontList.forEach(fontname => {
+        let font = {};
+        font.name = fontname;
+        font.height = random(1,10);
+        font.width = random(1,10);
+        fontData.allowedFonts.push(font);
+    });
+    return fontData;
+}
+
+function getRandomFontList() {
+    let numberAllowedFonts = random(2, 5);
+    let numberFonts = FONT_LIST.length
+    let fontList = [];
+    let indices = [];
+    for (let i = 0; i < numberAllowedFonts; i++) {
+        let index = random(0, numberFonts-1);
+        while(indices.includes(index)) {
+            index = random(0, numberFonts-1);
+        }
+        indices.push(index);
+        fontList.push(FONT_LIST[index]);
+    }
+    return fontList;
+}

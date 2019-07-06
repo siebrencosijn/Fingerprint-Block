@@ -8,6 +8,18 @@ export function getHostname(url) {
 }
 
 /*
+ * Returns the origin URL of a request.
+ */
+export async function getOriginUrl(details) {
+    if (details.parentFrameId === -1) {
+        return details.originUrl || details.url;
+    } else {
+        let tab = await browser.tabs.get(details.tabId);
+        return tab.url;
+    }
+}
+
+/*
  * Returns the contents of a file as a text string.
  */
 export function readFile(path, callback) {

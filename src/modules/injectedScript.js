@@ -15,7 +15,7 @@ export default function injectedScript(webidentity) {
     let detection = detections.getDetection(domain);
     let script = "\r\n<script type='text/javascript'>\r\n"
         + "function detected(domain, name, key, action, data) { "
-        + "window.postMessage({ "
+        + "window.top.postMessage({ "
         + "direction: 'from-page-script', "
         + "message: {domain: domain, name: name, key: key, action: action, data: data} "
         + "}, '*') };"

@@ -1,6 +1,6 @@
 {
     "manifest_version": 2,
-    "name": "FPBlock",
+    "name": "FP-Block 2",
     "version": "0.1",
     "description": "Preventing browser fingerprinting",
     "homepage_url": "https://github.com/siebrencosijn/Fingerprint-Block.git",
@@ -33,7 +33,7 @@
 
     "options_ui": {
         "page": "interface/optionsPage.html",
-        "open_in_tab": true
+        "browser_style": true
     },
 
     "content_scripts": [

@@ -2,28 +2,25 @@ import webIdentities from './webIdentities.js';
 import detections from './detections.js';
 import options from './options.js';
 import publicSuffix from '../utils/publicSuffix.js';
-import { getHostname } from '../utils/utils.js';
+import { getHostname, getOriginUrl } from '../utils/utils.js';
 import { SOCIAL_PLUGINS } from '../utils/constants.js';
 
-export default async function requestListener(e) {
-    let target = publicSuffix.getDomain(getHostname(e.url));
-    let tabs = await browser.tabs.query({currentWindow: true, active: true});
-    let origin = publicSuffix.getDomain(getHostname(tabs[0].url));
-    if (!origin) {
-        origin = target;
-    }
+export default async function requestListener(details) {
+    let originUrl = await getOriginUrl(details);
+    let origin = publicSuffix.getDomain(getHostname(originUrl));
+    let target = publicSuffix.getDomain(getHostname(details.url));
     let webidentity = webIdentities.getWebIdentity(origin);
     webidentity.incrementUsage();
     if (webidentity.enabled) {
         if (target !== origin && blockThirdParty(target, webidentity.thirdparties)) {
             return {cancel: true};
         }
-        if (blockSocialPlugin(e.url, webidentity.socialplugins)) {
+        if (blockSocialPlugin(details.url, webidentity.socialplugins)) {
             return {cancel: true};
         }
-        changeRequestHeaders(e.requestHeaders, webidentity);
+        changeRequestHeaders(details.requestHeaders, webidentity);
     }
-    return {requestHeaders: e.requestHeaders};
+    return {requestHeaders: details.requestHeaders};
 }
 
 /*
@@ -51,9 +48,18 @@ function changeRequestHeaders(headers, webidentity) {
         if (name === "accept-language") {
             header.value = http.acceptLanguage;
         }
-        // Remove ETag headers
+        // remove etag headers
         if (options.get("remove_etag") && etags.includes(name)) {
             header.value = "";
+        }
+    }
+    // send dnt header
+    if (options.get("dnt")) {
+        let dnt = headers.find(h => h.name.toLowerCase() === "dnt");
+        if (dnt !== undefined) {
+            dnt.value = "1";
+        } else {
+            headers.push({name: "DNT", value: "1"});
         }
     }
 }

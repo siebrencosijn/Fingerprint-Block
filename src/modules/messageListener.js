@@ -2,6 +2,7 @@ import detectionListener from './detectionListener.js';
 import webIdentities from './webIdentities.js';
 import detections from './detections.js';
 import options from './options.js';
+import fingerprintGenerator from './fingerprintGenerator.js';
 import publicSuffix from '../utils/publicSuffix.js';
 import { getHostname } from '../utils/utils.js';
 import { SPOOF_ATTRIBUTES } from '../utils/constants.js';
@@ -12,8 +13,9 @@ const ACTIONS = {
     "detection": detection,
     "get-options": getOptions,
     "set-options": setOptions,
+    "get-webidentities": getWebidentities,
+    "delete-webidentities": deleteWebidentities,
     "get-webidentity-detection": getWebidentityDetection,
-    "get-all-webidentities-detections": getWebidentitiesDetections,
     "toggle-attribute": toggleAttribute,
     "toggle-thirdparty": toggleThirdParty,
     "toggle-socialplugin": toggleSocialPlugin,
@@ -35,11 +37,28 @@ function detection(params) {
 }
 
 function getOptions(params) {
-    params.sendResponse({ response: options.getAll() });
+    params.sendResponse({response: options.getAll()});
 }
 
 function setOptions(params) {
     options.setOptions(params.message.content);
+}
+
+function getWebidentities(params) {
+    params.sendResponse({response: webIdentities.webidentities});
+}
+
+function deleteWebidentities(params) {
+    let domains = params.message.content;
+    for (let domain of domains) {
+        let tree = fingerprintGenerator.tree;
+        let fingerprint = webIdentities.getWebIdentity(domain).fingerprint;
+        let value = fingerprint.key;
+        let weight = fingerprint.weight;
+        detections.deleteDetection(domain);
+        webIdentities.removeWebIdentity(domain);
+        tree.insert(value, weight);
+    }
 }
 
 function getWebidentityDetection(params) {
@@ -50,15 +69,6 @@ function getWebidentityDetection(params) {
         response: {
             webidentity: webidentity,
             detection: detection
-        }
-    });
-}
-
-function getWebidentitiesDetections(params) {
-    params.sendResponse({
-        response: {
-            webidentities: webIdentities.webidentities,
-            detections: detections.detections
         }
     });
 }

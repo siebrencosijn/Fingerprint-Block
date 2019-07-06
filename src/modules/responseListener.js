@@ -6,19 +6,16 @@
 import injectedScript from './injectedScript.js';
 import webIdentities from './webIdentities.js';
 import publicSuffix from '../utils/publicSuffix.js';
-import { getHostname } from '../utils/utils.js';
+import { getHostname, getOriginUrl } from '../utils/utils.js';
 
 const CONTENT_TYPE = "Content-Type",
       TEXT_HTML = "text/html",
       TEXT_HTML_WITH_CHARSET = TEXT_HTML + "; charset";
 
 export default async function responseListener(details) {
-    let tabs = await browser.tabs.query({currentWindow: true, active: true});
-    let domain = publicSuffix.getDomain(getHostname(tabs[0].url));
-    if (!domain) {
-        domain = publicSuffix.getDomain(getHostname(details.url));
-    }
-    let webidentity = webIdentities.getWebIdentity(domain);
+    let originUrl = await getOriginUrl(details);
+    let origin = publicSuffix.getDomain(getHostname(originUrl));
+    let webidentity = webIdentities.getWebIdentity(origin);
     if (webidentity.enabled && isContentType(details)) {
         let filter = browser.webRequest.filterResponseData(details.requestId);
         let decoder = new TextDecoder(getCharset(details));

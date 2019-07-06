@@ -1,115 +1,83 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" href="skin.css"/>
-    </head>
-    <body>
-        <div id="fingerprintprivacy-popup">
-            <table>
-                <tr>
-                    <td>
-                        <table>
-                            <tr>
-                                <td>
-                                    <div id="title">FP-Block2</div>
-                                </td>
-			                    <td rowspan="2" id="private-browsing">
-			            	    </td>
-			                    <td rowspan="2">
-                                    <image src='/interface/icons/settings.png' title="Settings" id="settings"/>
-			                    </td>
-			                </tr>
-			                <tr>
-                                <td>
-			            	        <div id="domain"></div>
-			                    </td>
-			                </tr>
-			            </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-	                    <div id="social-plugins">
-                	        <div class="caption">Social Plugins</div>
-                	        <div id="social-plugins-table">
-                              <table style="margin: auto;">
-                                  <tr id="social-plugins-tr"></tr>
-                              </table>
-                   	      </div>
-    			        </div>
-    		        </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div id="summary">
-                	        <div class="caption">Summary</div>
-    				        <div id="summary-list">
-    					        <table>
-							        <tr class="summary-list-item" alt="Click to view requested attributes">
-								        <td class="summary-list-item-label">Requested attributes:</td>
-								        <td class="summary-list-item-number" id="detected-attributes"></td>
-								        <td><image src="/interface/icons/collapsed.png" id="arrow-attributes"/></td>
-							        </tr>
-						            <tr>
-							            <td colspan="3">
-                                            <div id="attribute-list"></div>
-			    				            <div class="attribute">
-				    				            <table style="width: 100%; table-layout: fixed; word-wrap: break-word;" id="attribute-table">
-									            </table>
-				    			            </div>
-				    		            </td>
-				    	            </tr>
-						            <tr class="summary-list-item" alt="Click to view third-parties">
-							            <td class="summary-list-item-label">Third-parties:</td>
-							            <td class="summary-list-item-number" id="detected-third-parties"></td>
-							            <td><image src="/interface/icons/collapsed.png" id="arrow-third-parties"/></td>
-						            </tr>
-						            <tr>
-							            <td colspan="3">
-								            <div id="third-parties-list"></div>
-			    			                <div class="third-party">
-				    				            <table style="width: 100%; table-layout: fixed; word-wrap: break-word;" id="third-party-table">
-									            </table>
-				    		                </div>
-				    	                </td>
-			    	                </tr>
-					            </table>
-				            </div>
-    	                </div>
-                    </td>
-                </tr>
-                <!--
-                <tr>
-                    <td>
-                        <div id="browser-plugins">
-                            <div class="caption">Browser Plugins</div>
-    		                <div id="browser-plugins-table">
-                            </div>
-			            </div>
-                    </td>
-                </tr>
-                -->
-                <tr>
-                    <td>
-	                    <div id="website-switch">
-                            <div class="onoffswitch">
-	                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="websiteonoffswitch" />
-						        <label class="onoffswitch-label" for="websiteonoffswitch">
-							        <div class="onoffswitch-inner"></div>
-						            <div class="onoffswitch-switch"></div>
-						        </label>
-					        </div>
-	                    </div>
-    		        </td>
-                </tr>
-                <tr>
-                    <td>
-	                    <div id="domain-error"></div>
-                    </td>
-                </tr>
-            </table>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="skin.css">
+</head>
+<body>
+    <div id="popup">
+        <div class="tabs">
+            <button id="overview-tab" class="tab">Overview</button>
+            <button id="webidentities-tab" class="tab">Web Identities</button>
+            <button id="options-tab" class="tab">Settings</button>
         </div>
-        <script src="popup.js"></script>
-    </body>
+        <div id="info" class="component">
+            <div id="title">FP-Block 2</div>
+            <div id="subtitle"></div>
+        </div>
+        <div class="border-bottom"></div>
+        <div id="overview-panel" class="panel">
+            <div id="social-plugins" class="component">
+                <div class="caption">Social Plugins</div>
+                <div id="social-plugins-list">
+                    <span class="empty">No social plugins detected</span>
+                </div>
+            </div>
+            <div class="border-bottom"></div>
+            <div id="summary" class="component">
+                <div class="caption">Summary</div>
+                <details>
+                    <summary>
+                        <span class="summary-list-label">Requested attributes:</span>
+                        <span class="summary-list-number" id="detected-attributes"></span>
+                    </summary>
+                    <ul id="attribute-list" class="summary-list"></ul>
+                </details>
+                <details>
+                    <summary>
+                        <span class="summary-list-label">Third-parties:</span>
+                        <span class="summary-list-number" id="detected-third-parties"></span>
+                    </summary>
+                    <ul id="third-party-list" class="summary-list"></ul>
+                </details>
+            </div>
+            <div class="border-bottom"></div>
+            <div id="website-switch" class="component">
+                <div class="onoffswitch">
+                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="websiteonoffswitch" checked/>
+                    <label class="onoffswitch-label" for="websiteonoffswitch">
+                        <div class="onoffswitch-inner"></div>
+                        <div class="onoffswitch-switch"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div id="webidentities-panel" class="panel">
+            <div id="webidentities" class="component">
+                <input type="text" placeholder="Search domain names" id="webidentity-search">
+                <table id="webidentities-table">
+                    <tbody></tbody>
+                </table>
+                <button class="browser-style" id="select-button">Select All</button>
+                <button class="browser-style" id="clear-button">Clear Selection</button>
+                <button class="browser-style" id="delete-button">Delete</button>
+            </div>
+        </div>
+        <div id="options-panel" class="panel">
+            <div id="options" class="component">
+                <ul id="options-list">
+                    <li><label class="browser-style checkbox-label"><input type="checkbox" id="notify">Show notifications</label></li>
+                    <li><label class="browser-style checkbox-label"><input type="checkbox" id="dnt">Send Do Not Track (DNT) header</label></li>
+                    <li><label class="browser-style checkbox-label"><input type="checkbox" id="remove_etag">Remove HTTP ETag headers</label></li>
+                    <li><label class="browser-style checkbox-label"><input type="checkbox" id="block_tpcookies">Block third-party cookies</label></li>
+                    <li><label class="browser-style checkbox-label"><input type="checkbox" id="block_social">Block social plugins</label></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="overviewTab.js"></script>
+    <script src="webIdentitiesTab.js"></script>
+    <script src="optionsTab.js"></script>
+    <script src="popup.js"></script>
+</body>
 </html>

@@ -57,7 +57,7 @@ let publicSuffix = {
             }
         } else {
             // modify exception by removing the leftmost label
-            rule.pop();
+            rule.shift();
         }
         let diff = labels.length - rule.length;
         return labels.slice(diff - 1, labels.length).join(".");

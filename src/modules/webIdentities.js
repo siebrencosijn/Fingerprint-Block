@@ -1,4 +1,4 @@
-import randomFingerprintGenerator from './randomFingerprintGenerator.js';
+import fingerprintGenerator from './fingerprintGenerator.js';
 import WebIdentity from '../classes/WebIdentity.js';
 
 let webIdentities = {
@@ -47,7 +47,7 @@ let webIdentities = {
                 return webidentity;
             }
         }
-        webidentity = new WebIdentity(domain, randomFingerprintGenerator.generate());
+        webidentity = new WebIdentity(domain, fingerprintGenerator.generate());
         this.addWebIdentity(webidentity);
         return webidentity;
     },

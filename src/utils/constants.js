@@ -136,6 +136,5 @@ export const DEFAULT_OPTIONS = {
     block_tpcookies: true,
     dnt: true,
     remove_etag: false,
-    block_social: true,
-    block_browser: true
+    block_social: true
 };

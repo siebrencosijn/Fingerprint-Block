@@ -16,7 +16,7 @@ readFile('../data/public_suffix_list.dat', (list) => {
 options.loadOptions();
 
 // Load fingerprint generator
-//fingerprintGenerator.load();
+fingerprintGenerator.load();
 
 // Load web identities
 webIdentities.loadWebIdentities();

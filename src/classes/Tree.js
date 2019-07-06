@@ -1,5 +1,6 @@
-const LEFT = 0;
-const RIGHT = 1;
+const PARENT = i => (i - 1) >> 1;
+const LEFT   = i => 2 * i + 1;
+const RIGHT  = i => 2 * i + 2;
 
 /**
  * Class representing a weighted node.
@@ -15,49 +16,6 @@ class TreeNode {
         this.weight = weight;
         this.sum = weight;
         this.size = 1;
-        this.parent = null;
-        this.children = [null, null];
-    }
-
-    /**
-     * Return the size of the child node with given direction.
-     * @param {number} dir - The direction (0 = left, 1 = right).
-     * @return {number} Size of the child node.
-     */
-    cSize(dir) {
-        return this.children[dir] !== null ? this.children[dir].size : 0;
-    }
-
-    /**
-     * Return the sum of the child node with given direction.
-     * @param {number} dir - The direction (0 = left, 1 = right).
-     * @return {number} Sum of the child node.
-     */
-    cSum(dir) {
-        return this.children[dir] !== null ? this.children[dir].sum : 0;
-    }
-
-    /**
-     * Update the size and sum of the node.
-     */
-    update() {
-        this.size = 1 + this.cSize(LEFT) + this.cSize(RIGHT);
-        this.sum = this.weight + this.cSum(LEFT) + this.cSum(RIGHT);
-    }
-
-    /**
-     * Print a graphical representation of this node and its children to the console.
-     */
-    print(prefix = "", isTail = true) {
-        console.log(prefix + (isTail ? "└── " : "├── ") + this.value);
-        if (this.children[LEFT] !== null && this.children[RIGHT] !== null) {
-            this.children[LEFT].print(prefix + (isTail ? "    " : "│   "), false);
-            this.children[RIGHT].print(prefix + (isTail ? "    " : "│   "), true);
-        } else if (this.children[LEFT] !== null) {
-            this.children[LEFT].print(prefix + (isTail ? "    " : "│   "), true);
-        } else if (this.children[RIGHT] !== null) {
-            this.children[RIGHT].print(prefix + (isTail ? "    " : "│   "), true);
-        }
     }
 }
 
@@ -67,9 +25,92 @@ class TreeNode {
 class Tree {
     /**
      * Create an empty tree.
+     * @param {number} size - Size of the tree.
      */
-    constructor() {
-        this.root = null;
+    constructor(size) {
+        this.tree = new Array(size).fill(null);
+        Object.seal(this.tree);
+    }
+
+    /**
+     * Return the size of the tree.
+     * @return {number} Size of the tree.
+     */
+    get size() {
+        return this.tree.length;
+    }
+
+    /**
+     * Return the node at given index.
+     * @param {number} index - Index of the node.
+     * @return {TreeNode} The node.
+     */
+    at(index) {
+        return this.tree[index];
+    }
+
+    /**
+     * Return the size of the left child.
+     * @param {number} index - Index of the parent.
+     * @return {number} Size of the left child.
+     */
+    leftSize(index) {
+        let leftIndex = LEFT(index);
+        if (leftIndex < this.size && this.tree[leftIndex] !== null) {
+            return this.tree[leftIndex].size;
+        }
+        return 0;
+    }
+
+    /**
+     * Return the size of the right child.
+     * @param {number} index - Index of the parent.
+     * @return {number} Size of the right child.
+     */
+    rightSize(index) {
+        let rightIndex = RIGHT(index);
+        if (rightIndex < this.size && this.tree[rightIndex] !== null) {
+            return this.tree[rightIndex].size;
+        }
+        return 0;
+    }
+
+    /**
+     * Return the sum of the left child.
+     * @param {number} index - Index of the parent.
+     * @return {number} Sum of the left child.
+     */
+    leftSum(index) {
+        let leftIndex = LEFT(index);
+        if (leftIndex < this.size && this.tree[leftIndex] !== null) {
+            return this.tree[leftIndex].sum;
+        }
+        return 0;
+    }
+
+    /**
+     * Return the sum of the right child.
+     * @param {number} index - Index of the parent.
+     * @return {number} Sum of the right child.
+     */
+    rightSum(index) {
+        let rightIndex = RIGHT(index);
+        if (rightIndex < this.size && this.tree[rightIndex] !== null) {
+            return this.tree[rightIndex].sum;
+        }
+        return 0;
+    }
+
+    /**
+     * Update the size and sum of a node.
+     * @param {number} index - Index of the node.
+     */
+    update(index) {
+        let node = this.tree[index];
+        if (node !== null) {
+            node.size = 1 + this.leftSize(index) + this.rightSize(index);
+            node.sum = node.weight + this.leftSum(index) + this.rightSum(index);
+        }
     }
 
     /**
@@ -78,76 +119,45 @@ class Tree {
      * @param {number} weight - Weight of the node.
      */
     insert(value, weight) {
-        let n = new TreeNode(value, weight);
-        let c = this.root;
-        let p = null;
-        let dir;
-        while (c !== null) {
-            p = c; 
-            p.size++;
-            p.sum += weight;
-            dir = p.cSize(LEFT) <= p.cSize(RIGHT) ? LEFT : RIGHT;
-            c = p.children[dir];
+        let node = new TreeNode(value, weight);
+        let index = 0;
+        let current = this.tree[index];
+        while (current !== null) {
+            current.size++;
+            current.sum += weight;
+            if (this.leftSize(index) <= this.rightSize(index)) {
+                index = LEFT(index);
+            } else {
+                index = RIGHT(index);
+            }
+            current = this.tree[index];
         }
-        if (p === null) {
-            this.root = n;
-        } else {
-            p.children[dir] = n;
-            n.parent = p;
-        }
+        this.tree[index] = node;
     }
 
     /**
      * Delete a node from the tree.
-     * @param {TreeNode} n - The node.
+     * @param {number} index - Index of the node.
      */
-    delete(n) {
-        let l = n.children[LEFT];
-        let r = n.children[RIGHT];
-        if (l !== null && r !== null) {
-            // two children
-            let c = l.size > r.size ? l : r;
-            while (c.children[LEFT] !== null || c.children[RIGHT] !== null) {
-                let dir = c.cSize(LEFT) > c.cSize(RIGHT) ? LEFT : RIGHT;
-                c = c.children[dir];
-            }
-            n.value = c.value;
-            n.weight = c.weight;
-            this._remove(c);
-        } else if (l !== null) {
-            // only left child
-            this._remove(n, l);
-        } else if (r !== null) {
-            // only right child
-            this._remove(n, r);
-        } else {
-            // no children
-            this._remove(n);
-        }
-    }
-
-    /**
-     * Remove a node from the tree by replacing it with null or another node.
-     * @param {TreeNode} n - The node to be removed.
-     * @param {TreeNode} replacement - The replacement.
-     */
-    _remove(n, replacement = null) {
-        let p = n.parent;
-        if (p === null) {
-            this.root = replacement;
-        } else {
-            if (n === p.children[LEFT]) {
-                p.children[LEFT] = replacement;
+    delete(index) {
+        let replacementIndex = index;
+        let leftSize = this.leftSize(index);
+        let rightSize = this.rightSize(index);
+        while (leftSize > 0 || rightSize > 0) {
+            if (leftSize > rightSize) {
+                replacementIndex = LEFT(replacementIndex);
             } else {
-                p.children[RIGHT] = replacement;
+                replacementIndex = RIGHT(replacementIndex);
             }
+            leftSize = this.leftSize(replacementIndex);
+            rightSize = this.rightSize(replacementIndex);
         }
-        if (replacement !== null) {
-            replacement.parent = p;
-        }
-        while (p !== null) {
-            p.update();
-            p = p.parent;
+        this.tree[index] = this.tree[replacementIndex];
+        this.tree[replacementIndex] = null;
+        let parentIndex = PARENT(replacementIndex);
+        while (parentIndex >= 0) {
+            this.update(parentIndex);
+            parentIndex = PARENT(parentIndex);
         }
     }
 
@@ -156,25 +166,28 @@ class Tree {
      * @return {*} Value of the node.
      */
     random() {
-        let curr = this.root;
-        if (curr === null) {
+        let index = 0;
+        let current = this.tree[index];
+        if (current === null) {
             return null;
         }
-        let r = Math.random() * curr.sum;
+        let r = Math.random() * current.sum;
         while (true) {
-            if (curr.cSum(LEFT) < r) {
-                r -= curr.cSum(LEFT);
-                if (r < curr.weight) {
-                    let ret = {value: curr.value, weight: curr.weight};
-                    this.delete(curr);
+            let leftSum = this.leftSum(index);
+            if (leftSum < r) {
+                r -= leftSum;
+                if (r < current.weight) {
+                    let ret = {value: current.value, weight: current.weight};
+                    this.delete(index);
                     return ret;
                 } else {
-                    r -= curr.weight;
-                    curr = curr.children[RIGHT];
+                    r -= current.weight;
+                    index = RIGHT(index);
                 }
             } else {
-                curr = curr.children[LEFT];
+                index = LEFT(index);
             }
+            current = this.tree[index];
         }
     }
 }
