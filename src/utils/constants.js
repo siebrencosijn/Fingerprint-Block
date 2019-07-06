@@ -25,9 +25,6 @@ export const SPOOF_ATTRIBUTES = [
     "Product",
     "User-Agent",
     "Vendor",
-    "CPU Class",
-    "System Language",
-    "User Language",
     "Available Height",
     "Available Width",
     "Color depth",
@@ -42,7 +39,6 @@ export const DOM_OBJECTS = {
         appCodeName:    { name: "App Code Name", accessType: "objectProperty", valueType: "string" },
         appName:        { name: "App Name", accessType: "objectProperty", valueType: "string" },
         appVersion:     { name: "App version", accessType: "objectProperty", valueType: "string" },
-        battery:        { name: "Battery", accessType: "objectProperty", valueType: "string" },
         connection:     { name: "Connection", accessType: "misc", valueType: "string" },
         cookieEnabled:  { name: "Cookie enabled", accessType: "objectProperty", valueType: "string" },
         geolocation:    { name: "Geolocation", accessType: "objectProperty", valueType: "string" },
@@ -58,12 +54,7 @@ export const DOM_OBJECTS = {
         doNotTrack:     { name: "Do Not Track", accessType: "objectProperty", valueType: "string" },
         productSub:     { name: "Product Subversion", accessType: "objectProperty", valueType: "string" },
         vendor:         { name: "Vendor", accessType: "objectProperty", valueType: "string" },
-        vendorSub:      { name: "Vendor Subversion", accessType: "objectProperty", valueType: "string" },
-        mozBattery:     { name: "MozBattery", accessType: "objectProperty", valueType: "string" },
-        cpuClass:       { name: "CPU Class", accessType: "objectProperty", valueType: "string" },
-        systemLanguage: { name: "System Language", accessType: "objectProperty", valueType: "string" },
-        userLanguage:   { name: "User Language", accessType: "objectProperty", valueType: "string" },
-        // securityPolicy: { name: "IE Security Policy", type: "objectProperty", valueType: "string" }
+        vendorSub:      { name: "Vendor Subversion", accessType: "objectProperty", valueType: "string" }
     },
     screen: {
         availHeight:{ name: "Available Height", accessType: "objectProperty", valueType: "number" },
@@ -91,16 +82,7 @@ export const DOM_OBJECTS = {
         WebGLRenderingContext: {
             name: "WebGL Rendering Context", accessType: "objectProperty", valueType: "object"
         }
-        //indexedDB: { name: "IndexedDB", accessType: "objectProperty" },
-        //openDatabase: { name: "OpenDatabase", accessType: "objectProperty" }
    }
-
-    // Element: {
-    //     ieUserData: {
-    //         name: "IE userData", accessType: "prototype", objectName: "Element",
-    //         functionNames: ["addBehavior", "save", "load"]
-    //     }
-    // }
 };
 
 export const ELEMENTS_PREVENTING_FONT_DETECTION = {

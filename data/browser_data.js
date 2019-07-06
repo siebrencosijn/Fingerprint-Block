@@ -15,34 +15,52 @@ const DATA = {
             "name" : "chrome",
             "weight" : 1,
             "os" : [
-                {"name" : WIN_OS[0], "proc" : WIN_PROC[0], "weight" : 0.4494},
-                {"name" : WIN_OS[0], "proc" : WIN_PROC[1], "weight" : 0.4494},
-                {"name" : WIN_OS[0], "proc" : WIN_PROC[2], "weight" : 0.4494},
-                {"name" : WIN_OS[1], "proc" : WIN_PROC[0], "weight" : 0.0098},
-                {"name" : WIN_OS[1], "proc" : WIN_PROC[1], "weight" : 0.0098},
-                {"name" : WIN_OS[1], "proc" : WIN_PROC[2], "weight" : 0.0098},
-                {"name" : WIN_OS[2], "proc" : WIN_PROC[0], "weight" : 0.0540},
-                {"name" : WIN_OS[2], "proc" : WIN_PROC[1], "weight" : 0.0540},
-                {"name" : WIN_OS[2], "proc" : WIN_PROC[2], "weight" : 0.0540},
-                {"name" : WIN_OS[3], "proc" : WIN_PROC[0], "weight" : 0.4655},
-                {"name" : WIN_OS[3], "proc" : WIN_PROC[1], "weight" : 0.4655},
-                {"name" : WIN_OS[3], "proc" : WIN_PROC[2], "weight" : 0.4655},
-                {"name" : LIN_OS[0], "proc" : LIN_PROC[0], "weight" : 0.0214},
-                {"name" : LIN_OS[0], "proc" : LIN_PROC[1], "weight" : 0.0214}
+                {"name" : WIN_OS[0], "proc" : WIN_PROC[0], "weight" : 0.4303},
+                {"name" : WIN_OS[0], "proc" : WIN_PROC[1], "weight" : 0.4303},
+                {"name" : WIN_OS[0], "proc" : WIN_PROC[2], "weight" : 0.4303},
+                {"name" : WIN_OS[1], "proc" : WIN_PROC[0], "weight" : 0.0085},
+                {"name" : WIN_OS[1], "proc" : WIN_PROC[1], "weight" : 0.0085},
+                {"name" : WIN_OS[1], "proc" : WIN_PROC[2], "weight" : 0.0085},
+                {"name" : WIN_OS[2], "proc" : WIN_PROC[0], "weight" : 0.0461},
+                {"name" : WIN_OS[2], "proc" : WIN_PROC[1], "weight" : 0.0461},
+                {"name" : WIN_OS[2], "proc" : WIN_PROC[2], "weight" : 0.0461},
+                {"name" : WIN_OS[3], "proc" : WIN_PROC[0], "weight" : 0.4970},
+                {"name" : WIN_OS[3], "proc" : WIN_PROC[1], "weight" : 0.4970},
+                {"name" : WIN_OS[3], "proc" : WIN_PROC[2], "weight" : 0.4970},
+                {"name" : LIN_OS[0], "proc" : LIN_PROC[0], "weight" : 0.0181},
+                {"name" : LIN_OS[0], "proc" : LIN_PROC[1], "weight" : 0.0181}
             ],
             "versions" : [
                 {
-                    "number" : "72.0.3626",
-                    "weight" : 0.0034,
+                    "number" : "74.0.3729",
+                    "weight" :  0.2034,
                     "patches": [
                         {
-                            "numbers" : [81]
+                            "numbers" : [108,131,157,169]
+                        }
+                    ]
+                },
+                {
+                    "number" : "73.0.3683",
+                    "weight" : 0.4664,
+                    "patches": [
+                        {
+                            "numbers" : [75,86,103]
+                        }
+                    ]
+                }
+                {
+                    "number" : "72.0.3626",
+                    "weight" : 0.2860,
+                    "patches": [
+                        {
+                            "numbers" : [81,96,109,119,121]
                         }
                     ]
                 },
                 {
                     "number" : "71.0.3578",
-                    "weight" : 0.4601,
+                    "weight" : 0.0191,
                     "patches": [
                         {
                             "numbers" : [80, 98]
@@ -51,7 +69,7 @@ const DATA = {
                 },
                 {
                     "number" : "70.0.3538",
-                    "weight" : 0.4751,
+                    "weight" : 0.0086,
                     "patches": [
                         {
                             "numbers" : [67, 77, 102, 110]
@@ -60,7 +78,7 @@ const DATA = {
                 },
                 {
                     "number" : "69.0.3497",
-                    "weight" : 0.0243,
+                    "weight" : 0.0069,
                     "patches": [
                         {
                             "numbers" : [81, 92, 100]
@@ -69,7 +87,7 @@ const DATA = {
                 },
                 {
                     "number" : "68.0.3440",
-                    "weight" : 0.0101,
+                    "weight" : 0.0042,
                     "patches": [
                         {
                             "numbers" : [75, 84, 106]
@@ -78,37 +96,10 @@ const DATA = {
                 },
                 {
                     "number" : "67.0.3396",
-                    "weight" : 0.0103,
+                    "weight" : 0.0054,
                     "patches": [
                         {
                             "numbers" : [62, 79, 87, 99]
-                        }
-                    ]
-                },
-                {
-                    "number" : "66.0.3359",
-                    "weight" : 0.0045,
-                    "patches": [
-                        {
-                            "numbers" : [117, 139, 170, 181]
-                        }
-                    ]
-                },
-                {
-                    "number" : "65.0.3325",
-                    "weight" :  0.0077,
-                    "patches": [
-                        {
-                            "numbers" : [146, 162, 181]
-                        }
-                    ]
-                },
-                {
-                    "number" : "64.0.3282",
-                    "weight" : 0.0045,
-                    "patches": [
-                        {
-                            "numbers" : [119, 140, 167, 186]
                         }
                     ]
                 }
@@ -138,66 +129,66 @@ const DATA = {
             "name" : "firefox",
             "weight" : 1,
             "os" : [
-                {"name" : WIN_OS[0], "proc" : WIN_PROC[0], "weight" : 0.4124},
-                {"name" : WIN_OS[0], "proc" : WIN_PROC[1], "weight" : 0.4124},
-                {"name" : WIN_OS[0], "proc" : WIN_PROC[2], "weight" : 0.4124},
-                {"name" : WIN_OS[1], "proc" : WIN_PROC[0], "weight" : 0.0141},
-                {"name" : WIN_OS[1], "proc" : WIN_PROC[1], "weight" : 0.0141},
-                {"name" : WIN_OS[1], "proc" : WIN_PROC[2], "weight" : 0.0141},
-                {"name" : WIN_OS[2], "proc" : WIN_PROC[0], "weight" : 0.0656},
-                {"name" : WIN_OS[2], "proc" : WIN_PROC[1], "weight" : 0.0656},
-                {"name" : WIN_OS[2], "proc" : WIN_PROC[2], "weight" : 0.0656},
-                {"name" : WIN_OS[3], "proc" : WIN_PROC[0], "weight" : 0.4605},
-                {"name" : WIN_OS[3], "proc" : WIN_PROC[1], "weight" : 0.4605},
-                {"name" : WIN_OS[3], "proc" : WIN_PROC[2], "weight" : 0.4605},
-                {"name" : LIN_OS[0], "proc" : LIN_PROC[0], "weight" : 0.0474},
-                {"name" : LIN_OS[0], "proc" : LIN_PROC[1], "weight" : 0.0474}
+                {"name" : WIN_OS[0], "proc" : WIN_PROC[0], "weight" : 0.4036},
+                {"name" : WIN_OS[0], "proc" : WIN_PROC[1], "weight" : 0.4036},
+                {"name" : WIN_OS[0], "proc" : WIN_PROC[2], "weight" : 0.4036},
+                {"name" : WIN_OS[1], "proc" : WIN_PROC[0], "weight" : 0.0153},
+                {"name" : WIN_OS[1], "proc" : WIN_PROC[1], "weight" : 0.0153},
+                {"name" : WIN_OS[1], "proc" : WIN_PROC[2], "weight" : 0.0153},
+                {"name" : WIN_OS[2], "proc" : WIN_PROC[0], "weight" : 0.0637},
+                {"name" : WIN_OS[2], "proc" : WIN_PROC[1], "weight" : 0.0637},
+                {"name" : WIN_OS[2], "proc" : WIN_PROC[2], "weight" : 0.0637},
+                {"name" : WIN_OS[3], "proc" : WIN_PROC[0], "weight" : 0.4908},
+                {"name" : WIN_OS[3], "proc" : WIN_PROC[1], "weight" : 0.4908},
+                {"name" : WIN_OS[3], "proc" : WIN_PROC[2], "weight" : 0.4908},
+                {"name" : LIN_OS[0], "proc" : LIN_PROC[0], "weight" : 0.0267},
+                {"name" : LIN_OS[0], "proc" : LIN_PROC[1], "weight" : 0.0267}
             ],
             "versions" : [
                 {
+                    "number" : "67.0",
+                    "weight" : 0.0196,
+                    "buildid": "20181001000000"
+                },	
+                {
+                    "number" : "66.0",
+                    "weight" :  0.5892,
+                    "buildid": "20181001000000"
+                },
+                {
                     "number" : "65.0",
-                    "weight" : 0.0147,
+                    "weight" : 0.2581,
                     "buildid": "20181001000000"
                 },
                 {
                     "number" : "64.0",
-                    "weight" : 0.4155,
+                    "weight" : 0.0151,
                     "buildid": "20181001000000"
                 },
                 {
-                    "number" : "63.0.3538",
-                    "weight" : 0.4142,
-                    "buildid": "20181001000000"
+                    "number" : "63.0",
+                    "weight" : 0.0081,
+                    "buildid": "20181018182531"
                 },
                 {
-                    "number" : "62.0.3497",
-                    "weight" : 0.0208,
-                    "buildid": "20181001000000"
+                    "number" : "62.0",
+                    "weight" : 0.0058,
+                    "buildid": "20180830143136"
                 },
                 {
-                    "number" : "61.0.3440",
-                    "weight" : 0.0147,
-                    "buildid": "20181001000000"
+                    "number" : "61.0",
+                    "weight" : 0.0058,
+                    "buildid": "20180621125625"
                 },  
                 {
-                    "number" : "60.0.3396",
-                    "weight" : 0.0417,
-                    "buildid": "20181001000000"
-                },	  
-                {
-                    "number" : "59.0.3359",
-                    "weight" : 0.0098,
-                    "buildid": "20181001000000"
-                },	
-                {
-                    "number" : "58.0.3325",
-                    "weight" :  0.0086,
-                    "buildid": "20181001000000"
+                    "number" : "60.0",
+                    "weight" : 0.0440,
+                    "buildid": "20180503164101"
                 },
                 {
                     "number" : "52.0",
-                    "weight" : 0.0601,
-                    "buildid": "20181001000000"
+                    "weight" : 0.0544,
+                    "buildid": "20170302120751"
                 }
             ],
             "http" : {
@@ -222,35 +213,45 @@ const DATA = {
             "name" : "opera",
             "weight" : 1,
             "os" : [
-                {"name" : WIN_OS[0], "proc" : WIN_PROC[0], "weight" : 0.3912},
-                {"name" : WIN_OS[0], "proc" : WIN_PROC[1], "weight" : 0.3912},
-                {"name" : WIN_OS[0], "proc" : WIN_PROC[2], "weight" : 0.3912},
-                {"name" : WIN_OS[1], "proc" : WIN_PROC[0], "weight" : 0.0169},
-                {"name" : WIN_OS[1], "proc" : WIN_PROC[1], "weight" : 0.0169},
-                {"name" : WIN_OS[1], "proc" : WIN_PROC[2], "weight" : 0.0169},
-                {"name" : WIN_OS[2], "proc" : WIN_PROC[0], "weight" : 0.0793},
-                {"name" : WIN_OS[2], "proc" : WIN_PROC[1], "weight" : 0.0793},
-                {"name" : WIN_OS[2], "proc" : WIN_PROC[2], "weight" : 0.0793},
-                {"name" : WIN_OS[3], "proc" : WIN_PROC[0], "weight" : 0.4863},
-                {"name" : WIN_OS[3], "proc" : WIN_PROC[1], "weight" : 0.4863},
-                {"name" : WIN_OS[3], "proc" : WIN_PROC[2], "weight" : 0.4863},
-                {"name" : LIN_OS[0], "proc" : LIN_PROC[0], "weight" : 0.0263},
-                {"name" : LIN_OS[0], "proc" : LIN_PROC[1], "weight" : 0.0263}
+                {"name" : WIN_OS[0], "proc" : WIN_PROC[0], "weight" : 0.3795},
+                {"name" : WIN_OS[0], "proc" : WIN_PROC[1], "weight" : 0.3795},
+                {"name" : WIN_OS[0], "proc" : WIN_PROC[2], "weight" : 0.3795},
+                {"name" : WIN_OS[1], "proc" : WIN_PROC[0], "weight" : 0.0172},
+                {"name" : WIN_OS[1], "proc" : WIN_PROC[1], "weight" : 0.0172},
+                {"name" : WIN_OS[1], "proc" : WIN_PROC[2], "weight" : 0.0172},
+                {"name" : WIN_OS[2], "proc" : WIN_PROC[0], "weight" : 0.0812},
+                {"name" : WIN_OS[2], "proc" : WIN_PROC[1], "weight" : 0.0812},
+                {"name" : WIN_OS[2], "proc" : WIN_PROC[2], "weight" : 0.0812},
+                {"name" : WIN_OS[3], "proc" : WIN_PROC[0], "weight" : 0.4982},
+                {"name" : WIN_OS[3], "proc" : WIN_PROC[1], "weight" : 0.4982},
+                {"name" : WIN_OS[3], "proc" : WIN_PROC[2], "weight" : 0.4982},
+                {"name" : LIN_OS[0], "proc" : LIN_PROC[0], "weight" : 0.0240},
+                {"name" : LIN_OS[0], "proc" : LIN_PROC[1], "weight" : 0.0240}
             ],
             "versions" : [
                 {
-                    "number" : "58.0.3135",
-                    "weight" : 0.0105,
+                    "number" : "60.0.3255",
+                    "weight" : 0.1244,
                     "patches": [
                         {
-                            "numbers" : [47, 53],
+                            "numbers" : [56,59,70,83,95,109],
+                            "Chromium" : "73.0.3683.103"
+                        }
+                    ]
+                },
+                {
+                    "number" : "58.0.3135",
+                    "weight" : 0.8565,
+                    "patches": [
+                        {
+                            "numbers" : [47, 53, 65, 68, 79, 90 , 107, 117, 118, 127],
                             "Chromium" : "71.0.3578.80"
                         }
                     ]
                 },
                 {
                     "number" : "57.0.3098",
-                    "weight" : 0.4241,
+                    "weight" : 0.0096,
                     "patches": [
                         {
                             "numbers" : [76, 91, 102, 106, 110, 116],
@@ -260,21 +261,11 @@ const DATA = {
                 },
                 {
                     "number" : "56.0.3051",
-                    "weight" : 0.5602,
+                    "weight" : 0.0096,
                     "patches": [
                         {
                             "numbers" : [31, 36, 43, 52, 99, 104, 116],
                             "Chromium" : "69.0.3497.100"
-                        }
-                    ]
-                },
-                {
-                    "number" : "55.0.2994",
-                    "weight" : 0.0052,
-                    "patches": [
-                        {
-                            "numbers" : [37, 44, 56, 59, 61],
-                            "Chromium" : "68.0.3440.106"
                         }
                     ]
                 }
@@ -303,20 +294,19 @@ const DATA = {
 
     "screen" : {
         "resolutions" : [
-            {"width" : 1366, "height" : 768,  "weight" : 0.2982},
-            {"width" : 1920, "height" : 1080, "weight" : 0.2330},
-            {"width" : 1440, "height" : 900,  "weight" : 0.0801},
-            {"width" : 1536, "height" : 864,  "weight" : 0.0663},
-            {"width" : 1600, "height" : 900,  "weight" : 0.0593},
-            {"width" : 1280, "height" : 800,  "weight" : 0.0481},
-            {"width" : 1280, "height" : 1024, "weight" : 0.0405},
-            {"width" : 1024, "height" : 768,  "weight" : 0.0397},
-            {"width" : 1280, "height" : 720,  "weight" : 0.0375},
-            {"width" : 1680, "height" : 1050, "weight" : 0.0306},
-            {"width" : 2560, "height" : 1440, "weight" : 0.0261},
-            {"width" : 1360, "height" : 768,  "weight" : 0.0207},
-            {"width" : 1920, "height" : 1200, "weight" : 0.0145},
-            {"width" : 2048, "height" : 1152, "weight" : 0.0056}
+            {"width" : 1366, "height" : 768,  "weight" : 0.2960},
+            {"width" : 1920, "height" : 1080, "weight" : 0.2321},
+            {"width" : 1440, "height" : 900,  "weight" : 0.0834},
+            {"width" : 1536, "height" : 864,  "weight" : 0.0711},
+            {"width" : 1600, "height" : 900,  "weight" : 0.0592},
+            {"width" : 1280, "height" : 800,  "weight" : 0.0448},
+            {"width" : 1024, "height" : 768,  "weight" : 0.0441},
+            {"width" : 1280, "height" : 720,  "weight" : 0.0435},
+            {"width" : 1280, "height" : 1024, "weight" : 0.0415},
+            {"width" : 1680, "height" : 1050, "weight" : 0.0299},
+            {"width" : 2560, "height" : 1440, "weight" : 0.0215},
+            {"width" : 1360, "height" : 768,  "weight" : 0.0192},
+            {"width" : 1920, "height" : 1200, "weight" : 0.0137}
         ],
 
         "colordepth" : 24,
