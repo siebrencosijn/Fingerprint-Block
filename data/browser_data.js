@@ -48,7 +48,7 @@ const DATA = {
                             "numbers" : [75,86,103]
                         }
                     ]
-                }
+                },
                 {
                     "number" : "72.0.3626",
                     "weight" : 0.2860,
