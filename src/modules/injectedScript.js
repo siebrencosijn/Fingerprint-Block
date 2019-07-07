@@ -1,15 +1,23 @@
 /********************************************/
 /* -- Fingerprint Privacy --                */
-/* Author:                                  */
-/* Date: 3.07.2018                          */
+/* Date: 7.07.2019                          */
 /********************************************/
 
 import detections from './detections.js';
 import { DOM_OBJECTS, ELEMENTS_PREVENTING_FONT_DETECTION, ELEMENTS_PREVENTING_CANVAS_FINGERPRINTING, SPOOF_ATTRIBUTES } from '../utils/constants.js';
 
 const RETURN_UNDEFINED = "return (undefined);";
+const SCRIPT_GENERATE_NOISE_FUNCTION= "\r\nfunction generateNoise(canvas) { "
+                                        + "var imgData = canvas.getContext('2d').getImageData(0,0, canvas.width, canvas.height); " 
+                                        + "for(var i=0;i<imgData.data.length;i+=4){"
+                                            + "imgData.data[i+0]=Math.floor(Math.random()*256);"
+                                            + "imgData.data[i+1]=Math.floor(Math.random()*256);"
+                                            + "imgData.data[i+2]=Math.floor(Math.random()*256);"
+                                        + "}"
+                                        + "canvas.getContext('2d').putImageData(imgData,0,0);"  
+                                    +"};";
 
-export default function injectedScript(webidentity) {
+export default function createInjectedScript(webidentity) {
     let domain = webidentity.domain;
     let fingerprint = webidentity.fingerprint;
     let detection = detections.getDetection(domain);
@@ -44,12 +52,22 @@ function createScriptPreventingObjectFingerprinting(domObjects, domain, detectio
                         script += createScriptDefineProperty(domObjectKey, attributeKey, functionBody, returnStatement);
                     }  
                 } else if (attribute.accessType.indexOf("prototype") != -1) {
-                    script += createScriptPrototype(domObjectKey, attributeKey, attribute, functionBody, returnStatement);
+                    script += createScriptPrototypeProperty(domObjectKey, attributeKey, attribute, functionBody, returnStatement);
                 }
             }
         }
     }
     return script;
+}
+
+function getAttributeAction(detection, attributeName) {
+    let attributeAction = "block";
+    if (detection !== undefined && detection.containsAttribute(attributeName)) {
+        attributeAction = detection.getAttribute(attributeName).action;
+    } else if (SPOOF_ATTRIBUTES.includes(attributeName)) {
+        attributeAction = "spoof";
+    }
+    return attributeAction;
 }
 
 function getReturnStatement(attributeAction, valueType, domObjectKey, attributeKey, fingerprint) {
@@ -69,16 +87,6 @@ function getReturnStatement(attributeAction, valueType, domObjectKey, attributeK
     return returnStatement;
 }
 
-function getAttributeAction(detection, attributeName) {
-    let attributeAction = "block";
-    if (detection !== undefined && detection.containsAttribute(attributeName)) {
-        attributeAction = detection.getAttribute(attributeName).action;
-    } else if (SPOOF_ATTRIBUTES.includes(attributeName)) {
-        attributeAction = "spoof";
-    }
-    return attributeAction;
-}
-
 function createScriptStorageObject(attributeKey, functionNames, functionBody, returnStatement) {
     let script = "\r\nfor (var key in " + attributeKey + ") { "
            + createScriptDefineProperty(attributeKey, "key", functionBody, returnStatement) + "}";
@@ -88,7 +96,7 @@ function createScriptStorageObject(attributeKey, functionNames, functionBody, re
     return script;
 }
 
-function createScriptPrototype(domObjectKey, attributeKey, attribute, functionBody, returnStatement) {
+function createScriptPrototypeProperty(domObjectKey, attributeKey, attribute, functionBody, returnStatement) {
     let script = "";
     if (attribute.accessType.indexOf("prototypeFunction") != -1) {
         for (let functionName of attribute.functionNames) {
@@ -116,24 +124,18 @@ function createScriptPreventingFontDetection(domObjects, domain, detection, fing
         attribute = domObjects[objectKey][attributeKey];
         attributeAction = getAttributeAction(detection, attribute.name);
         if(attributeAction.indexOf("allow") == -1) {
-            functionBody = "let fontFamily = this.style.fontFamily; ";
-            fingerprint.fontData.allowedFonts.forEach(font => {
-                functionBody += "if(fontFamily.indexOf('"+ font.name +"') != -1) {return "+ font.height +"}";
-            });
+            functionBody = "detected('" + domain + "', '" + attribute.name + "', '" + attributeKey + "', '" + attributeAction + "', null);"
             returnStatement = "return "+ fingerprint.fontData.defaultHeight +";";
-            script += createScriptPrototype(objectKey, attributeKey, attribute, functionBody, returnStatement);
+            script += createScriptPrototypeProperty(objectKey, attributeKey, attribute, functionBody, returnStatement);
         }
         //width
         attributeKey = attributeKeys[1]
         attribute = domObjects[objectKey][attributeKey];
         attributeAction = getAttributeAction(detection, attribute.name);
         if(attributeAction.indexOf("allow") == -1) {
-            functionBody = "let fontFamily = this.style.fontFamily; ";
-            fingerprint.fontData.allowedFonts.forEach(font => {
-                functionBody += "if(fontFamily.indexOf('"+ font.name +"') != -1) {return "+ font.width +"}";
-            });
+            functionBody = "detected('" + domain + "', '" + attribute.name + "', '" + attributeKey + "', '" + attributeAction + "', null);"
             returnStatement = "return "+ fingerprint.fontData.defaultWidth +";";
-            script += createScriptPrototype(objectKey, attributeKey, attribute, functionBody, returnStatement);
+            script += createScriptPrototypeProperty(objectKey, attributeKey, attribute, functionBody, returnStatement);
         }
     }
     return script;
@@ -155,7 +157,7 @@ function createScriptPreventingCanvasFingerprinting(domObjects, domain, detectio
             functionBody = "detected('" + domain + "', '" + attribute.name + "', '" + attributeKey + "', '" + attributeAction + "', null);";
             returnStatement = "original_"+attributeKey + ".apply(this, arguments);";
             script += "\r\n" + originalFunction 
-                    + createScriptPrototype(canvasRenderingObjectKey, attributeKey, attribute, functionBody, returnStatement);
+                    + createScriptPrototypeProperty(canvasRenderingObjectKey, attributeKey, attribute, functionBody, returnStatement);
         }  
     }
 
@@ -169,9 +171,10 @@ function createScriptPreventingCanvasFingerprinting(domObjects, domain, detectio
         functionBody = createScriptDataToUrlFunctionBody(domain, attribute, attributeKey, attributeAction, fingerprint);
         returnStatement = " return (result);" ;
         script += originalFunction
-             + createScriptPrototype(htmlCanvasElementObjectKey, attributeKey, attribute, functionBody, returnStatement) 
-             + createScriptGenerateNoiseFunction(fingerprint);
-
+             + createScriptPrototypeProperty(htmlCanvasElementObjectKey, attributeKey, attribute, functionBody, returnStatement);
+        if (!!fingerprint && !!fingerprint.canvasData && fingerprint.canvasData.data == null) {
+            script +=SCRIPT_GENERATE_NOISE_FUNCTION;
+        }
     }
     return script;
 }
@@ -188,33 +191,4 @@ function createScriptDataToUrlFunctionBody(domain, attribute, attributeKey, attr
         }
     }
     return script;
-}
-
-function createScriptGenerateNoiseFunction(fingerprint) {
-    let script = "";
-    if (!!fingerprint && !!fingerprint.canvasData && fingerprint.canvasData.data == null) {
-        script = "\r\nfunction generateNoise(canvas) { var imgData = canvas.getContext('2d').getImageData(0,0, canvas.width, canvas.height); " 
-            + "for(var i=0;i<imgData.data.length;i+=4){"
-                + "imgData.data[i+0]=Math.floor(Math.random()*256);"
-                + "imgData.data[i+1]=Math.floor(Math.random()*256);"
-                + "imgData.data[i+2]=Math.floor(Math.random()*256);"
-            + "}"
-            + "canvas.getContext('2d').putImageData(imgData,0,0);"
-            // + "var imageObj=new Image();"
-            // + "imageObj.onload=function(){"
-            //     + "canvas.getContext('2d').drawImage(imageObj,Math.floor(Math.random()*(canvas.width-imageObj.width)),"
-            //         + "Math.floor(Math.random()*(canvas.height-imageObj.height)));"
-            // + "};"
-            // + "var min = Math.min(canvas.width,canvas.height);"
-            // + "if(min <= 32){"
-            //     + "imageObj.src='chrome://fingerprintprivacy/skin/toolbar-icon.png';"
-            // + "}else if(min <= 64){"
-            //     + "imageObj.src='chrome://fingerprintprivacy/skin/icon32.png';"
-            // + "}else if(min <= 128){"
-            //     + "imageObj.src='chrome://fingerprintprivacy/skin/icon64.png';"
-            // + "}else{"
-            //     + "imageObj.src='chrome://fingerprintprivacy/skin/logo.png';}};"   
-        +"};";
-    }
-    return script; 
 }

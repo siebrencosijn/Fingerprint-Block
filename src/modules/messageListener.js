@@ -115,16 +115,7 @@ function toggleWebsite(params) {
 }
 
 function notificationButton(params) {
-    if (params.message.content === "keep") {
-        detections.getDetection(params.message.domain).notified = true;
-    } else if (params.message.content === "allow") {
-        let url = browser.extension.getURL("interface/webidentitiesPage.html");
-        browser.windows.create({
-            url: url,
-            type: 'panel',
-            height: 400,
-            width: 400
-        });
+    if (params.message.content === "ok") {
         detections.getDetection(params.message.domain).notified = true;
     }
 }
@@ -136,10 +127,6 @@ function setDimentionOfHTMLElement(params) {
     let fingerprint = webidentity ? webidentity.fingerprint : undefined;
     if(!!fingerprint && !!fingerprint.fontData) {
         fingerprint.fontData.defaultHeight = dimension.height; 
-        fingerprint.fontData.defaultWidth = dimension.width;
-        fingerprint.fontData.allowedFonts.forEach(font => {
-            font.height = dimension.height + random(1, 10);
-            font.width = dimension.width + random(1,10);
-        });       
+        fingerprint.fontData.defaultWidth = dimension.width;       
     }
 }

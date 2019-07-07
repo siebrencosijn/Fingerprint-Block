@@ -12,7 +12,7 @@ window.addEventListener("message", function (event) {
 });
 
 browser.runtime.onMessage.addListener(request => {
-    if (request.action === "notify") {
+    if (request.action.indexOf("notify") != -1 ) {
         let element = document.getElementById("content-script-notification");
         let label = document.getElementById('notification-message');
         if (element) {
@@ -32,44 +32,44 @@ browser.runtime.onMessage.addListener(request => {
     }
 });
 
-//TODO: adujst style
 function addElement(message, domain) {
     var element = document.createElement("div");
     element.setAttribute('id', 'content-script-notification');
-    element.style.position = "absolute";
-    element.style.width = "500px";
-    element.style.height = "250px";
-    element.style.backgroundColor = "powderblue";
+    element.style.position = "relative";
+    element.style.width = "75%";
+    element.style.backgroundColor = "#f2f2f2";
+    element.style.border = "1px solid";
+    element.style.boxShadow = "2px 2px 4px 4px #bfbfbf";
+    element.style.padding = "5px";
     element.style.top = "6px";
     element.style.left = "13px";
     element.style.zIndex = 2199998;
+    element.style.fontSize = "15px";
+    var messageContainer = document.createElement("div");
     var label = document.createElement("LABEL");
     label.setAttribute('id', 'notification-message');
     label.appendChild(document.createTextNode(message));
-    var buttonKeepBlocking = document.createElement("BUTTON");
-    buttonKeepBlocking.appendChild(document.createTextNode("Keep blocking"));
-    buttonKeepBlocking.addEventListener("click", function (event) {
+    messageContainer.appendChild(label);
+    var buttonContainer = document.createElement("div");
+    var buttonOK = document.createElement("BUTTON");
+    buttonOK.style.fontSize = "15px";
+    buttonOK.style.backgroundColor = "#99cfff";
+    buttonOK.style.padding = "5px";
+    buttonContainer.style.textAlign = "right";
+    buttonOK.appendChild(document.createTextNode("Ok"));
+    buttonOK.addEventListener("click", function (event) {
         browser.runtime.sendMessage({
             action: "notificationButton",
-            content: "keep",
+            content: "ok",
             domain: domain
         });
         element.parentNode.removeChild(element);
     });
-    var buttonAllow = document.createElement("BUTTON");
-    buttonAllow.appendChild(document.createTextNode("Allow"));
-    buttonAllow.addEventListener("click", function (event) {
-        browser.runtime.sendMessage({
-            action: "notificationButton",
-            content: "allow",
-            domain: domain
-        });
-        element.parentNode.removeChild(element);
-    });
-    element.appendChild(label);
-    element.appendChild(buttonKeepBlocking);
-    element.appendChild(buttonAllow);
-    document.body.appendChild(element);
+    buttonContainer.appendChild(buttonOK);
+    element.appendChild(messageContainer);
+    element.appendChild(buttonContainer);
+    document.body.insertBefore(element, document.body.firstChild)
+    //document.body.appendChild(element);
 }
 
 function getDimentionOfHTMLElement() {

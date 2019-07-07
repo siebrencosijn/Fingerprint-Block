@@ -3,7 +3,7 @@
 /* Author:                                  */
 /* Date: 2.07.2018                          */
 /********************************************/
-import injectedScript from './injectedScript.js';
+import createInjectedScript from './injectedScript.js';
 import webIdentities from './webIdentities.js';
 import publicSuffix from '../utils/publicSuffix.js';
 import { getHostname, getOriginUrl } from '../utils/utils.js';
@@ -22,7 +22,7 @@ export default async function responseListener(details) {
         let encoder = new TextEncoder();
         filter.ondata = event => {
             let str = decoder.decode(event.data, { stream: true });
-            var script = "\r\n<meta charset='utf-8'>" + injectedScript(webidentity);
+            var script = "\r\n<meta charset='utf-8'>" + createInjectedScript(webidentity);
             var pattern = /(<head[^>]*>)/i;
             str = str.replace(pattern, "$1" + script);
             filter.write(encoder.encode(str));
