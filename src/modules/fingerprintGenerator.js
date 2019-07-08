@@ -36,7 +36,7 @@ let fingerprintGenerator = {
      */
     generate() {
         let r = this.tree.random();
-        let fontData = {defaultWidth: 0, defaultHeight: 0};
+        let fontData = {defaultWidth: 64, defaultHeight: 100};
         let canvasData = { data: null };
         return new Fingerprint(r.value, r.weight, fontData, canvasData);
     },

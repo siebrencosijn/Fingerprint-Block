@@ -21,21 +21,21 @@ browser.runtime.onMessage.addListener(request => {
             document.body.onload = addElement(request.message, request.domain);
         }
     } 
-    else if (request.action.indexOf("determineDefaultHTMLElementDimension") != -1) {
-        var dimention = getDimentionOfHTMLElement();
+    // else if (request.action.indexOf("determineDefaultHTMLElementDimension") != -1) {
+    //     var dimention = getDimentionOfHTMLElement();
         
-        browser.runtime.sendMessage({
-            action: "setDimentionOfHTMLElement",
-            content: dimention,
-            domain: request.domain
-        });
-    }
+    //     browser.runtime.sendMessage({
+    //         action: "setDimentionOfHTMLElement",
+    //         content: dimention,
+    //         domain: request.domain
+    //     });
+    // }
 });
 
 function addElement(message, domain) {
     var element = document.createElement("div");
     element.setAttribute('id', 'content-script-notification');
-    element.style.position = "relative";
+    element.style.position = "sticky";
     element.style.width = "75%";
     element.style.backgroundColor = "#f2f2f2";
     element.style.border = "1px solid";
@@ -43,8 +43,9 @@ function addElement(message, domain) {
     element.style.padding = "5px";
     element.style.top = "6px";
     element.style.left = "13px";
-    element.style.zIndex = 2199998;
+    element.style.zIndex = 21474836454;
     element.style.fontSize = "15px";
+    element.style.lineHeight = "normal";
     var messageContainer = document.createElement("div");
     var label = document.createElement("LABEL");
     label.setAttribute('id', 'notification-message');
@@ -72,21 +73,21 @@ function addElement(message, domain) {
     //document.body.appendChild(element);
 }
 
-function getDimentionOfHTMLElement() {
-    var width=0; var height=0;
-    var h = document.getElementsByTagName('BODY')[0];
-    var d = document.createElement('DIV');
-    var s = document.createElement('SPAN');
-    d.appendChild(s);
-    d.style.fontFamily = 'sans';
-    s.style.fontFamily = 'sans';
-    s.style.fontSize = '72px';
-    s.style.backgroundColor = 'white';
-    s.style.color = 'white';
-    s.innerHTML = 'mmmmmmmmmmlil';
-    h.appendChild(d);
-    width = s.offsetWidth;
-    height = s.offsetHeight;
-    h.removeChild(d);
-    return {width: width, height: height}
-}
+// function getDimentionOfHTMLElement() {
+//     var width=0; var height=0;
+//     var h = document.getElementsByTagName('BODY')[0];
+//     var d = document.createElement('DIV');
+//     var s = document.createElement('SPAN');
+//     d.appendChild(s);
+//     d.style.fontFamily = 'sans';
+//     s.style.fontFamily = 'sans';
+//     s.style.fontSize = '72px';
+//     s.style.backgroundColor = 'white';
+//     s.style.color = 'white';
+//     s.innerHTML = 'mmmmmmmmmmlil';
+//     h.appendChild(d);
+//     width = s.offsetWidth;
+//     height = s.offsetHeight;
+//     h.removeChild(d);
+//     return {width: width, height: height}
+// }

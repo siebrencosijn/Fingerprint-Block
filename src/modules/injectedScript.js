@@ -21,7 +21,7 @@ export default function createInjectedScript(webidentity) {
     let domain = webidentity.domain;
     let fingerprint = webidentity.fingerprint;
     let detection = detections.getDetection(domain);
-    let script = "\r\n<script type='text/javascript'>\r\n"
+    let script = "\r\n<script id='fpblock-script' type='text/javascript'>\r\n"
         + "function detected(domain, name, key, action, data) { "
         + "window.top.postMessage({ "
         + "direction: 'from-page-script', "
@@ -29,8 +29,11 @@ export default function createInjectedScript(webidentity) {
         + "}, '*') };"
         + createScriptPreventingObjectFingerprinting(DOM_OBJECTS, domain, detection, fingerprint)
         + createScriptPreventingFontDetection(ELEMENTS_PREVENTING_FONT_DETECTION, domain, detection, fingerprint)
-        + createScriptPreventingCanvasFingerprinting(ELEMENTS_PREVENTING_CANVAS_FINGERPRINTING, domain, detection, fingerprint)
-        + "\r\n</script>\r\n";
+        + createScriptPreventingCanvasFingerprinting(ELEMENTS_PREVENTING_CANVAS_FINGERPRINTING, domain, detection, fingerprint);
+    // Remove this script 
+    script += "\r\nvar thisScriptElement = document.getElementById('fpblock-script');" 
+                +"thisScriptElement.parentNode.removeChild(thisScriptElement);";
+    script +="\r\n</script>\r\n";
     return script;
 }
 
@@ -119,12 +122,15 @@ function createScriptPreventingFontDetection(domObjects, domain, detection, fing
     let objectKey = Object.keys(domObjects)[0];
     let attributeKeys = Object.keys(domObjects[objectKey]);
     if(!!fingerprint && !! fingerprint.fontData) {
+        script += "var isHeightDetected = false; var isWidthDetected = false";
         //height
         attributeKey = attributeKeys[0]
         attribute = domObjects[objectKey][attributeKey];
         attributeAction = getAttributeAction(detection, attribute.name);
         if(attributeAction.indexOf("allow") == -1) {
-            functionBody = "detected('" + domain + "', '" + attribute.name + "', '" + attributeKey + "', '" + attributeAction + "', null);"
+            functionBody = "if (!isHeightDetected) {"
+                        +"detected('" + domain + "', '" + attribute.name + "', '" + attributeKey + "', '" + attributeAction + "', null); "
+                        +"isHeightDetected = true;}";
             returnStatement = "return "+ fingerprint.fontData.defaultHeight +";";
             script += createScriptPrototypeProperty(objectKey, attributeKey, attribute, functionBody, returnStatement);
         }
@@ -133,7 +139,9 @@ function createScriptPreventingFontDetection(domObjects, domain, detection, fing
         attribute = domObjects[objectKey][attributeKey];
         attributeAction = getAttributeAction(detection, attribute.name);
         if(attributeAction.indexOf("allow") == -1) {
-            functionBody = "detected('" + domain + "', '" + attribute.name + "', '" + attributeKey + "', '" + attributeAction + "', null);"
+            functionBody = "if (!isWidthDetected) {"
+                            +"detected('" + domain + "', '" + attribute.name + "', '" + attributeKey + "', '" + attributeAction + "', null);"
+                            +"isWidthDetected = true;}";
             returnStatement = "return "+ fingerprint.fontData.defaultWidth +";";
             script += createScriptPrototypeProperty(objectKey, attributeKey, attribute, functionBody, returnStatement);
         }

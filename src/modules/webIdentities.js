@@ -57,7 +57,7 @@ let webIdentities = {
      */
     addWebIdentity(webidentity) {
         this.webidentities.push(webidentity);
-        determineDefaultHTMLElementDimension(webidentity.domain);
+        //determineDefaultHTMLElementDimension(webidentity.domain);
     },
 
     /*
@@ -75,15 +75,18 @@ let webIdentities = {
 };
 export default webIdentities;
 
-function determineDefaultHTMLElementDimension(domain) {
-    browser.tabs.query({ currentWindow: true, active: true }).then(
-        tabs => {
-            for (let tab of tabs) {
-                browser.tabs.sendMessage(
-                    tab.id,
-                    { message: "", action: "determineDefaultHTMLElementDimension", domain: domain }
-                );
-            }
-        }
-    );
-}
+// function determineDefaultHTMLElementDimension(domain) {
+//     console.log("determinedefaulthtmlelementdimension 1");
+//     browser.tabs.query({ currentWindow: true, active: true }).then(
+//         tabs => {
+//             console.log("determinedefaulthtmlelementdimension 2");
+//             for (let tab of tabs) {
+//                 browser.tabs.sendMessage(
+//                     tab.id,
+//                     { message: "", action: "determineDefaultHTMLElementDimension", domain: domain }
+//                 );
+//                 console.log("determinedefaulthtmlelementdimension 3 " + tab.id);
+//             }
+//         }
+//     );
+// }

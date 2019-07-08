@@ -35,7 +35,6 @@ export default function detectionListener(message) {
         }
         detection.notified = false;
     }
-
     if (notify && !detection.notified) {
         notifyDetection(detection);
     }
@@ -46,7 +45,7 @@ export default function detectionListener(message) {
  */
 function notifyDetection(detection) {
     let attributeNames = detection.attributes.map(a => a.name);
-    let message = "FP-Block prevented " + detection.domain + " from reading the following attributes: " + attributeNames.join(", ");
+    let message = "<b>FP-Block prevented " + detection.domain + " from reading the following attributes: </b><br></br>" + attributeNames.join(", ");
     browser.tabs.query({ currentWindow: true, active: true }).then(
         tabs => {
             for (let tab of tabs) {
