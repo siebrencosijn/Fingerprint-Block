@@ -65,22 +65,18 @@ class Fingerprint {
         let proc = browser.os[this.key[OS]].proc;
         let ua = this.ua;
         let platform = os.includes("Win") ? "Win32" : "Linux " + proc;
-        let cpuClass = (proc.includes("Intel")) ? "x86" : (proc.includes("86")) ? "x86" : (proc.includes("PPC")) ? "PPC" : "Other";
         let appVersion = (browser.name === "opera") ? ua : ua.substring(8, ua.length);
         let nav = {
             userAgent: ua,
             appCodeName: browser.appcodename,
             appName: browser.appname,
-            language: language, // languages array
-            appVersion: appVersion, // different
+            language: language,
+            appVersion: appVersion,
             platform: platform,
             oscpu: platform,
             product: browser.product,
             productSub: browser.productSub,
-            vendor: browser.vendor,
-            cpuClass: cpuClass, // deprecated
-            systemLanguage: language, // deprecated
-            userLanguage: language // deprecated
+            vendor: browser.vendor
         }
         if (browser.name === "firefox") {
             nav.buildID = browser.versions[this.key[VERSION]].buildid;
