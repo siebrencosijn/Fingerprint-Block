@@ -115,7 +115,6 @@ export const ELEMENTS_PREVENTING_CANVAS_FINGERPRINTING = {
 
 export const DEFAULT_OPTIONS = {
     notify: true,
-    block_tpcookies: true,
     dnt: true,
     remove_etag: false,
     block_social: true

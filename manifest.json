@@ -13,7 +13,9 @@
         "tabs",
         "storage",
         "unlimitedStorage",
-        "notifications"
+        "notifications",
+        "browserSettings",
+        "privacy"
     ],
 
     "icons": {
