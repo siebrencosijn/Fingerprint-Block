@@ -112,19 +112,19 @@ function initSocialPlugins(webidentity) {
                 name = socialplugin.name,
                 block = socialplugin.block,
                 src = PATH + name + "-blocked.png",
-                tooltip = name + " blocked - click to allow",
+                tooltip = "click to allow " + name,
                 alt_src = PATH + name + "-allowed.png",
-                alt_tooltip = name + " allowed - click to block";
+                alt_tooltip = "click to block " + name;
             if (!block) {
                 [src, alt_src] = [alt_src, src];
                 [tooltip, alt_tooltip] = [alt_tooltip, tooltip];
             }
             input.type = "image";
             input.src = browser.extension.getURL(src);
-            input.tooltiptext = tooltip;
+            input.title = tooltip;
             input.addEventListener("click", () => {
                 input.src = browser.extension.getURL(alt_src);
-                input.tooltiptext = alt_tooltip;
+                input.title = alt_tooltip;
                 sendMessage("toggle-socialplugin", {
                     domain: webidentity.domain,
                     socialplugin: name,

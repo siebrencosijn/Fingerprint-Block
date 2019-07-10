@@ -3,7 +3,6 @@ body {
     font: caption;
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
 }
 
 table {
@@ -12,10 +11,12 @@ table {
 
 #popup {
     min-width: 310px;
+    max-height: 600px;
     font-size: 13px;
     font-weight: 400;
     color: #0c0c0d;
     position: relative;
+    overflow: auto;
 }
 
 #title {
@@ -60,6 +61,11 @@ table {
 
 .summary-list-number {
     float: right;
+}
+
+.scroll {
+    overflow: auto;
+    height: 200px;
 }
 
 .border-bottom {
@@ -129,6 +135,17 @@ table {
     width: 100%;
     border: 1px solid #b1b1b1;
     margin: 8px 0;
+}
+
+#webidentities-table tbody {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    height: 200px;
+}
+
+#webidentities-table tr:not(.hidden) {
+    display: block;
 }
 
 #webidentities-table td {
