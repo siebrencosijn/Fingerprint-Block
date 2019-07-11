@@ -1,3 +1,5 @@
+import webIdentities from './webIdentities.js';
+import detections from './detections.js';
 import Tree from '../classes/Tree.js';
 import Fingerprint from '../classes/Fingerprint.js';
 import DATA from '../../data/browser_data.js';
@@ -36,6 +38,11 @@ let fingerprintGenerator = {
      */
     generate() {
         let r = this.tree.random();
+        if (r === null) {
+            let oldest = webIdentities.removeOldest();
+            detections.deleteDetection(oldest.domain);
+            return oldest.fingerprint;
+        }
         let fontData = {defaultWidth: 64, defaultHeight: 100};
         let canvasData = { data: null };
         return new Fingerprint(r.value, r.weight, fontData, canvasData);

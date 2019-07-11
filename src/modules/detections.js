@@ -72,7 +72,7 @@ let detections = {
     deleteDetection(domain) {
         let index = this.getDetectionIndex(domain);
         if (index != -1) {
-            this.detections.slice(index, 1);
+            this.detections.splice(index, 1);
         }
     },
 

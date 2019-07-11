@@ -71,6 +71,23 @@ let webIdentities = {
                 return;
             }
         }
+    },
+
+    /*
+     * Remove the oldest web identity and return it.
+     */
+    removeOldest() {
+        let index_oldest = 0;
+        let oldest = this.webidentities[index_oldest];
+        for (let i = 1; i < this.webidentities.length; i++) {
+            let current = this.webidentities[i];
+            if (current.usage.date < oldest.usage.date) {
+                index_oldest = i;
+                oldest = current;
+            }
+        }
+        this.webidentities.splice(index_oldest, 1);
+        return oldest;
     }
 };
 export default webIdentities;
