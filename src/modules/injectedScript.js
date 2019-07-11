@@ -2,11 +2,18 @@
 /* -- Fingerprint Privacy --                */
 /* Date: 7.07.2019                          */
 /********************************************/
-
 import detections from './detections.js';
 import { DOM_OBJECTS, ELEMENTS_PREVENTING_FONT_DETECTION, ELEMENTS_PREVENTING_CANVAS_FINGERPRINTING, SPOOF_ATTRIBUTES } from '../utils/constants.js';
 
 const RETURN_UNDEFINED = "return (undefined);";
+const SCRIPT_DETECTED_FUNCTION = "function detected(domain, name, key, action, data) { "
+                                    + "window.top.postMessage({ "
+                                        + "direction: 'from-page-script', "
+                                        + "message: {domain: domain, name: name, key: key, action: action, data: data} "
+                                + "}, '*') };";
+const SCRIPT_REMOVE_INJECTED_SCRIPT = "\r\nvar thisScriptElement = document.getElementById('fpblock-script');" 
+                                    +"thisScriptElement.parentNode.removeChild(thisScriptElement);";
+
 const SCRIPT_GENERATE_NOISE_FUNCTION= "\r\nfunction generateNoise(canvas) { "
                                         + "var imgData = canvas.getContext('2d').getImageData(0,0, canvas.width, canvas.height); " 
                                         + "for(var i=0;i<imgData.data.length;i+=4){"
@@ -17,26 +24,32 @@ const SCRIPT_GENERATE_NOISE_FUNCTION= "\r\nfunction generateNoise(canvas) { "
                                         + "canvas.getContext('2d').putImageData(imgData,0,0);"  
                                     +"};";
 
+/**
+ * Creates the script that will be injected in the response from a web site.
+ * @param {*} webidentity webidentity for the web site
+ */                                    
 export default function createInjectedScript(webidentity) {
     let domain = webidentity.domain;
     let fingerprint = webidentity.fingerprint;
     let detection = detections.getDetection(domain);
     let script = "\r\n<script id='fpblock-script' type='text/javascript'>\r\n"
-        + "function detected(domain, name, key, action, data) { "
-        + "window.top.postMessage({ "
-        + "direction: 'from-page-script', "
-        + "message: {domain: domain, name: name, key: key, action: action, data: data} "
-        + "}, '*') };"
+        + SCRIPT_DETECTED_FUNCTION
         + createScriptPreventingObjectFingerprinting(DOM_OBJECTS, domain, detection, fingerprint)
         + createScriptPreventingFontDetection(ELEMENTS_PREVENTING_FONT_DETECTION, domain, detection, fingerprint)
         + createScriptPreventingCanvasFingerprinting(ELEMENTS_PREVENTING_CANVAS_FINGERPRINTING, domain, detection, fingerprint);
     // Remove this script 
-    script += "\r\nvar thisScriptElement = document.getElementById('fpblock-script');" 
-                +"thisScriptElement.parentNode.removeChild(thisScriptElement);";
+    script += SCRIPT_REMOVE_INJECTED_SCRIPT;
     script +="\r\n</script>\r\n";
     return script;
 }
 
+/**
+ * Creates a script code for the prevention against object fingerprinting.
+ * @param {*} domObjects objects of web browser with properties that should be spoofed/blocked
+ * @param {*} domain domain
+ * @param {*} detection detection for the domain
+ * @param {*} fingerprint fingerprint for domain
+ */
 function createScriptPreventingObjectFingerprinting(domObjects, domain, detection, fingerprint) {
     let script = "";
     for (let domObjectKey in domObjects) {
@@ -46,16 +59,16 @@ function createScriptPreventingObjectFingerprinting(domObjects, domain, detectio
                 attributeName = attribute.name,
                 attributeAction = getAttributeAction(detection, attributeName);
             if (attributeAction !== "allow") {
-                let functionBody = "detected('" + domain + "', '" + attributeName + "', '" + attributeKey + "', '" + attributeAction + "', null);";
+                let scriptDetected = "detected('" + domain + "', '" + attributeName + "', '" + attributeKey + "', '" + attributeAction + "', null);";
                 let returnStatement = getReturnStatement(attributeAction, attribute.valueType, domObjectKey, attributeKey, fingerprint);    
                 if (attribute.accessType.indexOf("objectProperty") != -1) {
                     if(attribute.valueType.indexOf("storageObject") != -1) {
-                        script += createScriptStorageObject(attributeKey, attribute.functionNames, functionBody, returnStatement);
+                        script += createScriptStorageObject(attributeKey, attribute.functionNames, scriptDetected, returnStatement);
                     } else {
-                        script += createScriptDefineProperty(domObjectKey, attributeKey, functionBody, returnStatement);
+                        script += createScriptDefineProperty(domObjectKey, attributeKey, scriptDetected, returnStatement);
                     }  
                 } else if (attribute.accessType.indexOf("prototype") != -1) {
-                    script += createScriptPrototypeProperty(domObjectKey, attributeKey, attribute, functionBody, returnStatement);
+                    script += createScriptPrototypeProperty(domObjectKey, attributeKey, attribute, scriptDetected, returnStatement);
                 }
             }
         }
@@ -63,6 +76,11 @@ function createScriptPreventingObjectFingerprinting(domObjects, domain, detectio
     return script;
 }
 
+/**
+ * Gets the action for the attribute with the given name saved in detection.
+ * @param {*} detection detection
+ * @param {*} attributeName the name of attribute
+ */
 function getAttributeAction(detection, attributeName) {
     let attributeAction = "block";
     if (detection !== undefined && detection.containsAttribute(attributeName)) {
@@ -73,6 +91,14 @@ function getAttributeAction(detection, attributeName) {
     return attributeAction;
 }
 
+/**
+ * Gets return statement for getter-function based on the value of attribute in the fingerprint.
+ * @param {*} attributeAction the action for the attribute
+ * @param {*} valueType the type of an attribute's value in an object of a web browser
+ * @param {*} domObjectKey the key of an object of a web browser
+ * @param {*} attributeKey the key of the attribute
+ * @param {*} fingerprint the fingerprint
+ */
 function getReturnStatement(attributeAction, valueType, domObjectKey, attributeKey, fingerprint) {
     let returnStatement = RETURN_UNDEFINED;
     if ( attributeAction.indexOf("spoof") != -1 && !!fingerprint && !!fingerprint[domObjectKey.toLowerCase()]) {
@@ -90,34 +116,63 @@ function getReturnStatement(attributeAction, valueType, domObjectKey, attributeK
     return returnStatement;
 }
 
-function createScriptStorageObject(attributeKey, functionNames, functionBody, returnStatement) {
+/**
+ * Creates script code for a storage object of a web browser.
+ * @param {*} attributeKey the key of attribute
+ * @param {*} functionNames the names of function in a storage object
+ * @param {*} scriptDetected the script code that calls function detected
+ * @param {*} returnStatement the return statement for getter-function of the attribute
+ */
+function createScriptStorageObject(attributeKey, functionNames, scriptDetected, returnStatement) {
     let script = "\r\nfor (var key in " + attributeKey + ") { "
-           + createScriptDefineProperty(attributeKey, "key", functionBody, returnStatement) + "}";
+           + createScriptDefineProperty(attributeKey, "key", scriptDetected, returnStatement) + "}";
     for (let functionName of functionNames) {
-        createScriptDefineProperty(attributeKey, functionName, functionBody, returnStatement);
+        createScriptDefineProperty(attributeKey, functionName, scriptDetected, returnStatement);
     }
     return script;
 }
 
-function createScriptPrototypeProperty(domObjectKey, attributeKey, attribute, functionBody, returnStatement) {
+/**
+ * Creates script code for the property/function accessed though the prototype of a object of a web browser.
+ * @param {*} domObjectKey the key of an object of a web browser
+ * @param {*} attributeKey the key of the attribute
+ * @param {*} attribute the attribute-object
+ * @param {*} scriptDetected the script code that calls function detected
+ * @param {*} returnStatement the return statement for getter-function of the attribute
+ */
+function createScriptPrototypeProperty(domObjectKey, attributeKey, attribute, scriptDetected, returnStatement) {
     let script = "";
     if (attribute.accessType.indexOf("prototypeFunction") != -1) {
         for (let functionName of attribute.functionNames) {
-            script += "\r\n " + domObjectKey + ".prototype." + functionName + " = function() { " + functionBody + " " + returnStatement + "};";
+            script += "\r\n " + domObjectKey + ".prototype." + functionName + " = function() { " + scriptDetected + " " + returnStatement + "};";
         }
     } else if (attribute.accessType.indexOf("prototypeProperty") != -1) {
-        script += createScriptDefineProperty(domObjectKey + ".prototype", attributeKey, functionBody, returnStatement);
+        script += createScriptDefineProperty(domObjectKey + ".prototype", attributeKey, scriptDetected, returnStatement);
     }
     return script;
 }
 
-function createScriptDefineProperty(domObject, propertyName, functionBody, returnStatement) {
-    return "\r\nObject.defineProperty(" + domObject + ", '" + propertyName + "', {get: function() {"
-        + functionBody + returnStatement + "}, enumerable: true });";
+/**
+ * Creates the script code that overwrites a property.
+ * @param {*} domObjectName the name of an object of a web browser
+ * @param {*} propertyName the name of a property
+ * @param {*} scriptDetected the script code that calls function detected
+ * @param {*} returnStatement the return statement for getter-function of the property
+ */
+function createScriptDefineProperty(domObjectName, propertyName, scriptDetected, returnStatement) {
+    return "\r\nObject.defineProperty(" + domObjectName + ", '" + propertyName + "', {get: function() {"
+        + scriptDetected + returnStatement + "}, enumerable: true });";
 }
 
+/**
+ *  * Creates a script code for the prevention against font fingerprinting.
+ * @param {*} domObjects objects of web browser with properties that should be spoofed/blocked
+ * @param {*} domain domain
+ * @param {*} detection detection for the domain
+ * @param {*} fingerprint fingerprint for domain
+ */
 function createScriptPreventingFontDetection(domObjects, domain, detection, fingerprint) {
-    let attribute, attributeAction, attributeKey, functionBody, returnStatement;
+    let attribute, attributeAction, attributeKey, scriptDetected, returnStatement;
     let script = "";
     let objectKey = Object.keys(domObjects)[0];
     let attributeKeys = Object.keys(domObjects[objectKey]);
@@ -128,27 +183,34 @@ function createScriptPreventingFontDetection(domObjects, domain, detection, fing
         attribute = domObjects[objectKey][attributeKey];
         attributeAction = getAttributeAction(detection, attribute.name);
         if(attributeAction.indexOf("allow") == -1) {
-            functionBody = "if (!isHeightDetected) {"
+            scriptDetected = "if (!isHeightDetected) {"
                         +"detected('" + domain + "', '" + attribute.name + "', '" + attributeKey + "', '" + attributeAction + "', null); "
                         +"isHeightDetected = true;}";
             returnStatement = "return "+ fingerprint.fontData.defaultHeight +";";
-            script += createScriptPrototypeProperty(objectKey, attributeKey, attribute, functionBody, returnStatement);
+            script += createScriptPrototypeProperty(objectKey, attributeKey, attribute, scriptDetected, returnStatement);
         }
         //width
         attributeKey = attributeKeys[1]
         attribute = domObjects[objectKey][attributeKey];
         attributeAction = getAttributeAction(detection, attribute.name);
         if(attributeAction.indexOf("allow") == -1) {
-            functionBody = "if (!isWidthDetected) {"
+            scriptDetected = "if (!isWidthDetected) {"
                             +"detected('" + domain + "', '" + attribute.name + "', '" + attributeKey + "', '" + attributeAction + "', null);"
                             +"isWidthDetected = true;}";
             returnStatement = "return "+ fingerprint.fontData.defaultWidth +";";
-            script += createScriptPrototypeProperty(objectKey, attributeKey, attribute, functionBody, returnStatement);
+            script += createScriptPrototypeProperty(objectKey, attributeKey, attribute, scriptDetected, returnStatement);
         }
     }
     return script;
 }
 
+/**
+ * Creates a script code for the prevention against cancas fingerprinting.
+ * @param {*} domObjects the objects of a web browser with properties that should be spoofed/blocked
+ * @param {*} domain the domain
+ * @param {*} detection the detection for the domain
+ * @param {*} fingerprint the fingerprint for domain
+ */
 function createScriptPreventingCanvasFingerprinting(domObjects, domain, detection, fingerprint) {
     let script = "";
     let attribute, attributeKey, attributeAction, functionBody, returnStatement, originalFunction;
@@ -187,6 +249,14 @@ function createScriptPreventingCanvasFingerprinting(domObjects, domain, detectio
     return script;
 }
 
+/**
+ * Creates the script code that overwrites the method dataToUrl().
+ * @param {*} domain the domain
+ * @param {*} attribute the attribute
+ * @param {*} attributeKey the key of the attribute
+ * @param {*} attributeAction the action of attribute
+ * @param {*} fingerprint the fingerprint
+ */
 function createScriptDataToUrlFunctionBody(domain, attribute, attributeKey, attributeAction, fingerprint) {
     let script;
     if(!!fingerprint) {

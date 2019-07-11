@@ -13,7 +13,7 @@ const DATA = {
         // CHROME
         {
             "name" : "chrome",
-            "weight" : 1,
+            "weight" : 0.8527,
             "os" : [
                 {"name" : WIN_OS[0], "proc" : WIN_PROC[0], "weight" : 0.4303},
                 {"name" : WIN_OS[0], "proc" : WIN_PROC[1], "weight" : 0.4303},
@@ -127,7 +127,7 @@ const DATA = {
         // FIREFOX
         {
             "name" : "firefox",
-            "weight" : 1,
+            "weight" : 0.1177,
             "os" : [
                 {"name" : WIN_OS[0], "proc" : WIN_PROC[0], "weight" : 0.4036},
                 {"name" : WIN_OS[0], "proc" : WIN_PROC[1], "weight" : 0.4036},
@@ -211,7 +211,7 @@ const DATA = {
         // OPERA
         {
             "name" : "opera",
-            "weight" : 1,
+            "weight" : 0.0296,
             "os" : [
                 {"name" : WIN_OS[0], "proc" : WIN_PROC[0], "weight" : 0.3795},
                 {"name" : WIN_OS[0], "proc" : WIN_PROC[1], "weight" : 0.3795},

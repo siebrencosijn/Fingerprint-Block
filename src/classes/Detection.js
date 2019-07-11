@@ -1,3 +1,7 @@
+/********************************************/
+/* -- Fingerprint Privacy --                */
+/* Date: 5.07.2018                          */
+/********************************************/
 class Detection {
     constructor(domain, notified) {
         this.domain = domain;
@@ -5,6 +9,10 @@ class Detection {
         this.attributes = [];
     }
 
+    /**
+     * Adds the attribute to the detection array of attributes.
+     * @param {*} attribute to add attribute
+     */
     addAttribute(attribute) {
         this.attributes.push(attribute);
     } 

@@ -1,3 +1,8 @@
+/********************************************/
+/* -- Fingerprint Privacy --                */
+/* Date: 5.07.2018                          */
+/********************************************/
+
 import options from "./options.js";
 import detections from "./detections.js";
 import Detection from "../classes/Detection.js";
@@ -5,12 +10,10 @@ import Attribute from "../classes/Attribute.js";
 import webIdentities from './webIdentities.js';
 import { ELEMENTS_PREVENTING_CANVAS_FINGERPRINTING } from "../utils/constants.js";
 
-/********************************************/
-/* -- Fingerprint Privacy --                */
-/* Author:                                  */
-/* Date: 5.07.2018                          */
-/********************************************/
-
+/**
+ * Listens to detection-message and adds info to detections.
+ * @param {*} message message from page-script with the detection information
+ */
 export default function detectionListener(message) {
     let notify = options.get("notify");
     let domain = message.domain;

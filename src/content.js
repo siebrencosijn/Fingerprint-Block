@@ -1,8 +1,15 @@
-// listen for messages from the injected page script
-// and send to background
+/********************************************/
+/* -- Fingerprint Privacy --                */
+/* Date: 5.07.2019                          */
+/********************************************/
+
+/**
+ * Listens for messages from the injected page script
+ *  and send to background
+ *  
+ */ 
 window.addEventListener("message", function (event) {
-    if (//event.source == window
-            event.data
+    if (event.data
             && event.data.direction === "from-page-script") {
         browser.runtime.sendMessage({
             action: "detection",
@@ -11,27 +18,23 @@ window.addEventListener("message", function (event) {
     }
 });
 
+/**
+ * Listens for messages from detectionListener
+ */
 browser.runtime.onMessage.addListener(request => {
     if (request.action.indexOf("notify") != -1 ) {
         let element = document.getElementById("content-script-notification");
-        let label = document.getElementById('notification-message');
         if (element) {
-            label.innerHTML = request.message;
+            document.getElementById('notification-message').innerHTML = request.message;
         } else {
             document.body.onload = addElement(request.message, request.domain);
         }
-    } 
-    // else if (request.action.indexOf("determineDefaultHTMLElementDimension") != -1) {
-    //     var dimention = getDimentionOfHTMLElement();
-        
-    //     browser.runtime.sendMessage({
-    //         action: "setDimentionOfHTMLElement",
-    //         content: dimention,
-    //         domain: request.domain
-    //     });
-    // }
+    }
 });
 
+/**
+ * Adds element to page to notify a user
+ */
 function addElement(message, domain) {
     var element = document.createElement("div");
     element.setAttribute('id', 'content-script-notification');
@@ -60,7 +63,7 @@ function addElement(message, domain) {
     buttonOK.appendChild(document.createTextNode("Ok"));
     buttonOK.addEventListener("click", function (event) {
         browser.runtime.sendMessage({
-            action: "notificationButton",
+            action: "set-detection-notified",
             content: "ok",
             domain: domain
         });
@@ -69,25 +72,5 @@ function addElement(message, domain) {
     buttonContainer.appendChild(buttonOK);
     element.appendChild(messageContainer);
     element.appendChild(buttonContainer);
-    document.body.insertBefore(element, document.body.firstChild)
-    //document.body.appendChild(element);
+    document.body.insertBefore(element, document.body.firstChild);
 }
-
-// function getDimentionOfHTMLElement() {
-//     var width=0; var height=0;
-//     var h = document.getElementsByTagName('BODY')[0];
-//     var d = document.createElement('DIV');
-//     var s = document.createElement('SPAN');
-//     d.appendChild(s);
-//     d.style.fontFamily = 'sans';
-//     s.style.fontFamily = 'sans';
-//     s.style.fontSize = '72px';
-//     s.style.backgroundColor = 'white';
-//     s.style.color = 'white';
-//     s.innerHTML = 'mmmmmmmmmmlil';
-//     h.appendChild(d);
-//     width = s.offsetWidth;
-//     height = s.offsetHeight;
-//     h.removeChild(d);
-//     return {width: width, height: height}
-// }

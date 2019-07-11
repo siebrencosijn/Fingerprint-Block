@@ -1,6 +1,5 @@
 /********************************************/
 /* -- Fingerprint Privacy --                */
-/* Author:                                  */
 /* Date: 2.07.2018                          */
 /********************************************/
 import createInjectedScript from './injectedScript.js';

@@ -1,3 +1,8 @@
+/********************************************/
+/* -- Fingerprint Privacy --                */
+/* Date: 5.07.2019                          */
+/********************************************/
+
 import detectionListener from './detectionListener.js';
 import webIdentities from './webIdentities.js';
 import detections from './detections.js';
@@ -6,8 +11,6 @@ import fingerprintGenerator from './fingerprintGenerator.js';
 import publicSuffix from '../utils/publicSuffix.js';
 import { getHostname } from '../utils/utils.js';
 import { SPOOF_ATTRIBUTES } from '../utils/constants.js';
-
-import random from '../utils/random.js';
 
 const ACTIONS = {
     "detection": detection,
@@ -20,8 +23,7 @@ const ACTIONS = {
     "toggle-thirdparty": toggleThirdParty,
     "toggle-socialplugin": toggleSocialPlugin,
     "toggle-website": toggleWebsite,
-    "notificationButton": notificationButton,
-    "setDimentionOfHTMLElement" : setDimentionOfHTMLElement
+    "set-detection-notified": setDetectionNotified
 };
 
 export default function messageListener(message, sender, sendResponse) {
@@ -114,19 +116,8 @@ function toggleWebsite(params) {
     webidentity.enabled = content.enabled;
 }
 
-function notificationButton(params) {
+function setDetectionNotified(params) {
     if (params.message.content === "ok") {
         detections.getDetection(params.message.domain).notified = true;
-    }
-}
-
-function setDimentionOfHTMLElement(params) {
-    let dimension = params.message.content;
-    let domain = params.message.domain;
-    let webidentity = domain ? webIdentities.getWebIdentity(domain) : undefined;
-    let fingerprint = webidentity ? webidentity.fingerprint : undefined;
-    if(!!fingerprint && !!fingerprint.fontData) {
-        fingerprint.fontData.defaultHeight = dimension.height; 
-        fingerprint.fontData.defaultWidth = dimension.width;       
     }
 }
