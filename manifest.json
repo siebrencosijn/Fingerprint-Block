@@ -5,6 +5,12 @@
     "description": "Preventing browser fingerprinting",
     "homepage_url": "https://github.com/siebrencosijn/Fingerprint-Block.git",
 
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "fpblock2@example.org"
+        }
+    },
+
     "permissions": [
         "<all_urls>",
         "webRequest",
@@ -31,11 +37,6 @@
 
     "background": {
         "page": "src/background.html"
-    },
-
-    "options_ui": {
-        "page": "interface/optionsPage.html",
-        "browser_style": true
     },
 
     "content_scripts": [

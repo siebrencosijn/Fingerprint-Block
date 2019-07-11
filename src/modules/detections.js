@@ -13,7 +13,7 @@ let detections = {
      * Load detections from browser local storage. 
      */
     loadDetections() {
-        browser.storage.local.get("detections").then(function (result) {
+        browser.storage.local.get("detections").then(result => {
             if (Object.getOwnPropertyNames(result).length != 0) {
                 this.detections = result;
             }

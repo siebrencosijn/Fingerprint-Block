@@ -10,7 +10,7 @@ let options = {
     loadOptions() {
         browser.storage.local.get("options").then(res => {
             if (Object.getOwnPropertyNames(res).length != 0) {
-                this.options = res;
+                this.options = res.options;
             } else {
                 this.options = DEFAULT_OPTIONS;
             }

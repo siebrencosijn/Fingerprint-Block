@@ -1,4 +1,5 @@
 import webIdentities from './modules/webIdentities.js';
+import detections from './modules/detections.js';
 import requestListener from './modules/requestListener.js';
 import responseListener from './modules/responseListener.js';
 import messageListener  from './modules/messageListener.js';
@@ -21,6 +22,9 @@ fingerprintGenerator.load();
 // Load web identities
 webIdentities.loadWebIdentities();
 
+// Load detections
+detections.loadDetections();
+
 // Add requestListener to onBeforeSendHeaders
 browser.webRequest.onBeforeSendHeaders.addListener(
     requestListener,
@@ -38,7 +42,6 @@ browser.webRequest.onHeadersReceived.addListener(
 // Handle communication with content script and user interface
 browser.runtime.onMessage.addListener(messageListener);
 
-// TODO move to responseListener?
 // Change the Referrer-Policy of HTTP responses
 //browser.webRequest.onHeadersReceived.addListener(e => {
 //    const NAME = "Referrer-Policy";
@@ -51,5 +54,3 @@ browser.runtime.onMessage.addListener(messageListener);
 //    }
 //    return {responseHeaders: e.responseHeaders};
 //}, {urls: ["<all_urls>"]}, ["blocking", "responseHeaders"]);
-
-// TODO save web identities and detections when extension stops running

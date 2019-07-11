@@ -12,7 +12,7 @@ let fingerprintGenerator = {
      */
     async load() {
         let first = false;
-        await browser.storage.local.get("tree").then(function(result) {
+        await browser.storage.local.get("tree").then(result => {
             if (Object.getOwnPropertyNames(result).length != 0) {
                 this.tree = result;
             } else {
