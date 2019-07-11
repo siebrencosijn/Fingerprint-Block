@@ -1,32 +1,24 @@
 import fingerprintGenerator from './fingerprintGenerator.js';
 import WebIdentity from '../classes/WebIdentity.js';
+import db from './database.js';
 
 let webIdentities = {
     webidentities : [],
 
     /*
-     * Load web identities from browser local storage.
+     * Retrieve web identities from database.
      */
     loadWebIdentities() {
-        browser.storage.local.get("webidentities").then(function(result) {
-            if (Object.getOwnPropertyNames(result).length != 0) {
-                this.webidentities = result;
-            }
+        db.get(db.DB_STORE_WEBIDENTITIES, (result) => {
+            this.webidentities = result;
         });
     },
 
     /*
-     * Save web identities to browser local storage.
+     * Save web identities to database.
      */
-    saveWebIdentities() {
-        browser.storage.local.set({"webidentities": this.webidentities});
-    },
-
-    /*
-     * Clear all web identities saved in browser local storage.
-     */
-    clearWebIdentities() {
-        browser.storage.local.remove("webidentities");
+    save() {
+        db.set(this.webidentities, db.DB_STORE_WEBIDENTITIES);
     },
 
     /*

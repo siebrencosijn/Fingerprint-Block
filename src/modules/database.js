@@ -4,8 +4,8 @@ let db = {
     upgrade(e) {
         let _db = e.target.result;
         let store1 = _db.createObjectStore(db.DB_STORE_TREE, {autoIncrement: true});
-        let store2 = _db.createObjectStore(db.DB_STORE_WEBIDENTITIES, {autoIncrement: true});
-        let store3 = _db.createObjectStore(db.DB_STORE_DETECTIONS, {autoIncrement: true});
+        let store2 = _db.createObjectStore(db.DB_STORE_WEBIDENTITIES, {keyPath: "domain"});
+        let store3 = _db.createObjectStore(db.DB_STORE_DETECTIONS, {keyPath: "domain"});
     },
 
     error(e) {
@@ -28,10 +28,10 @@ let db = {
         return transaction.objectStore(store_name);
     },
 
-    get(key, store_name, callback) {
+    get(store_name, callback) {
         db.open(() => {
             let store = db.getObjectStore(store_name, db.R);
-            let request = store.get(key);
+            let request = store.getAll();
             request.onsuccess = e => {
                 callback(e.target.result);
             };

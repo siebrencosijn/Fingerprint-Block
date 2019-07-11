@@ -1,10 +1,4 @@
-/****************************************************************/
-/* -- Fingerprint Privacy --                                    */
-/* Author: Christof Ferreira Torres                             */
-/* Date: 16.09.2014                                             */
-/* Update: 27.06.2018                                           */
-/****************************************************************/
-import Detection from '../classes/Detection.js';
+import db from './database.js';
 
 let detections = {
     detections: [],
@@ -13,25 +7,18 @@ let detections = {
      * Load detections from browser local storage. 
      */
     loadDetections() {
-        browser.storage.local.get("detections").then(result => {
-            if (Object.getOwnPropertyNames(result).length != 0) {
+        db.get(db.DB_STORE_DETECTIONS, (result) => {
+            if (result.length > 0) {
                 this.detections = result;
             }
         });
     },
 
     /**
-     * Save detections to browser local storage.
+     * Save detections to database.
      */
-    saveDetections() {
-        browser.storage.local.set({ "detections": this.detections });
-    },
-
-    /**
-     * Removes detections.
-     */
-    clearDetections() {
-        this.detections = [];
+    save() {
+        db.set(this.detections, db.DB_STORE_DETECTIONS);
     },
 
     /**

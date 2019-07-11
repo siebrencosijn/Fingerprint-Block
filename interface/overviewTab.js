@@ -12,8 +12,6 @@ function initOverview(webidentity, detection) {
         initThirdParties(webidentity);
         initWebsiteToggle(webidentity);
     } else {
-        // no web identity for this tab
-        // e.g. about:blank, about:newtab
         document.querySelector("#subtitle").innerHTML = "Overview";
     }
 }

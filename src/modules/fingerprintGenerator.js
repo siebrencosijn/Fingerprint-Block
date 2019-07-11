@@ -10,25 +10,17 @@ let fingerprintGenerator = {
      * Load the data from browser local storage,
      * or call initialize if this is the first run.
      */
-    async load() {
-        let first = false;
-        await browser.storage.local.get("tree").then(result => {
-            if (Object.getOwnPropertyNames(result).length != 0) {
+    load() {
+        db.get(db.DB_STORE_TREE, (result) => {
+            if (result.length > 0) {
                 this.tree = result;
             } else {
-                first = true;
+                this.init();
             }
         });
-        if (first) {
-            this.init();
-        }
     },
 
-    save(i) {
-        // TODO
-    },
-
-    saveAll() {
+    save() {
         db.set(this.tree.tree, db.DB_STORE_TREE);
     },
 
@@ -60,7 +52,6 @@ let fingerprintGenerator = {
         for (let fp of fps) {
             this.tree.insert(fp.id, fp.w);
         }
-        this.saveAll();
     },
 
     _init_browser_attr(fps) {
