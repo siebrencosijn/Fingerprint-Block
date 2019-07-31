@@ -1,5 +1,5 @@
 function initOptions(options) {
-    const DEFAULT = "allow_all";
+    const DEFAULT = "reject_trackers";
     const REJECT_THIRD_PARTY = "reject_third_party";
     const REJECT_ALL = "reject_all";
     document.querySelector("#subtitle").innerHTML = "Settings";
