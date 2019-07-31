@@ -21,7 +21,7 @@ let fingerprintGenerator = {
     },
 
     save() {
-        db.set(this.tree.tree, db.DB_STORE_TREE);
+        db.add(this.tree.tree, db.DB_STORE_TREE);
     },
 
     /**
@@ -52,6 +52,7 @@ let fingerprintGenerator = {
         for (let fp of fps) {
             this.tree.insert(fp.id, fp.w);
         }
+        //this.save();
     },
 
     _init_browser_attr(fps) {

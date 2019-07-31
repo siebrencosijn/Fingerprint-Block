@@ -1,5 +1,6 @@
 import fingerprintGenerator from './fingerprintGenerator.js';
 import WebIdentity from '../classes/WebIdentity.js';
+import Fingerprint from '../classes/Fingerprint.js';
 import db from './database.js';
 
 let webIdentities = {
@@ -10,15 +11,20 @@ let webIdentities = {
      */
     loadWebIdentities() {
         db.get(db.DB_STORE_WEBIDENTITIES, (result) => {
-            this.webidentities = result;
+            if (result.length > 0) {
+                this.webidentities = result;
+                for (let wid of this.webidentities) {
+                    wid.fingerprint = Fingerprint.from(wid.fingerprint);
+                }
+            }
         });
     },
 
     /*
-     * Save web identities to database.
+     * Save web identity to database.
      */
-    save() {
-        db.set(this.webidentities, db.DB_STORE_WEBIDENTITIES);
+    save(webidentity) {
+        db.put(webidentity, db.DB_STORE_WEBIDENTITIES);
     },
 
     /*
@@ -60,6 +66,7 @@ let webIdentities = {
             let webidentity = this.webidentities[i];
             if (webidentity.domain === domain) {
                 this.webidentities.splice(i, 1);
+                db.remove(domain, db.DB_STORE_WEBIDENTITIES);
                 return;
             }
         }
@@ -73,7 +80,7 @@ let webIdentities = {
         let oldest = this.webidentities[index_oldest];
         for (let i = 1; i < this.webidentities.length; i++) {
             let current = this.webidentities[i];
-            if (current.usage.date < oldest.usage.date) {
+            if (current.last_used < oldest.last_used) {
                 index_oldest = i;
                 oldest = current;
             }

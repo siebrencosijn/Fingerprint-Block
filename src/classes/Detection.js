@@ -56,5 +56,9 @@ class Detection {
     containsAttribute(name) {
         return this.getAttributeIndex(name) !== -1;
     }
+
+    static from(json) {
+        return Object.assign(new Detection(), json);
+    }
 }
 export default Detection;

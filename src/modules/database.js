@@ -38,12 +38,26 @@ let db = {
         });
     },
 
-    set(items, store_name) {
+    add(items, store_name) {
         db.open(() => {
             let store = db.getObjectStore(store_name, db.RW);
             items.forEach(item => {
                 store.add(item);
             });
+        });
+    },
+
+    put(item, store_name) {
+        db.open(() => {
+            let store = db.getObjectStore(store_name, db.RW);
+            store.put(item);
+        });
+    },
+
+    remove(item, store_name) {
+        db.open(() => {
+            let store = db.getObjectStore(store_name, db.RW);
+            store.delete(item);
         });
     },
 

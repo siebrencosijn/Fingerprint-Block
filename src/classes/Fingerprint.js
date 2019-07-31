@@ -104,5 +104,9 @@ class Fingerprint {
             timezoneOffset: DATA.timezones[this.key[TIMEZONE]]
         };
     }
+
+    static from(json) {
+        return Object.assign(new Fingerprint(), json);
+    }
 }
 export default Fingerprint;

@@ -10,7 +10,6 @@ export default async function requestListener(details) {
     let origin = publicSuffix.getDomain(getHostname(originUrl));
     let target = publicSuffix.getDomain(getHostname(details.url));
     let webidentity = webIdentities.getWebIdentity(origin);
-    webidentity.incrementUsage();
     if (webidentity.enabled) {
         if (target !== origin && blockThirdParty(target, webidentity.thirdparties)) {
             return {cancel: true};
@@ -20,6 +19,8 @@ export default async function requestListener(details) {
         }
         changeRequestHeaders(details.requestHeaders, webidentity);
     }
+    webidentity.last_used = new Date().getTime();
+    webIdentities.save(webidentity);
     return {requestHeaders: details.requestHeaders};
 }
 

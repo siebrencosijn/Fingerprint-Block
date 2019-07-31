@@ -38,9 +38,12 @@ export default function detectionListener(message) {
         }
         detection.notified = false;
     }
+
     if (notify && !detection.notified) {
         notifyDetection(detection);
     }
+
+    detections.save(detection);
 }
 
 /*

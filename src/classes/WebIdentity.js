@@ -5,16 +5,7 @@ class WebIdentity {
         this.fingerprint = fingerprint;
         this.thirdparties = [];
         this.socialplugins = [];
-        this.browserplugins = [];
-        this.usage = {
-            amount: 0,
-            date: new Date().getTime()
-        };
-    }
-
-    incrementUsage() {
-        this.usage.amount++;
-        this.usage.date = new Date().getTime();
+        this.last_used = new Date().getTime();
     }
 }
 export default WebIdentity;

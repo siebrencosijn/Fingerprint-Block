@@ -1,4 +1,5 @@
 import db from './database.js';
+import Detection from '../classes/Detection.js';
 
 let detections = {
     detections: [],
@@ -9,16 +10,19 @@ let detections = {
     loadDetections() {
         db.get(db.DB_STORE_DETECTIONS, (result) => {
             if (result.length > 0) {
-                this.detections = result;
+                this.detections = [];
+                for (let detection of result) {
+                    this.detections.push(Detection.from(detection));
+                }
             }
         });
     },
 
     /**
-     * Save detections to database.
+     * Save detection to database.
      */
-    save() {
-        db.set(this.detections, db.DB_STORE_DETECTIONS);
+    save(detection) {
+        db.put(detection, db.DB_STORE_DETECTIONS);
     },
 
     /**
@@ -60,6 +64,7 @@ let detections = {
         let index = this.getDetectionIndex(domain);
         if (index != -1) {
             this.detections.splice(index, 1);
+            db.remove(domain, db.DB_STORE_DETECTIONS);
         }
     },
 
