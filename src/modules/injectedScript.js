@@ -34,7 +34,7 @@ export default function createInjectedScript(webidentity) {
     let detection = detections.getDetection(domain);
     let script = "\r\n<script id='fpblock-script' type='text/javascript'>\r\n"
         + SCRIPT_DETECTED_FUNCTION
-        + createScriptPreventingObjectFingerprinting(DOM_OBJECTS, domain, detection, fingerprint)
+        + createScriptPreventingStandard(DOM_OBJECTS, domain, detection, fingerprint)
         + createScriptPreventingFontDetection(ELEMENTS_PREVENTING_FONT_DETECTION, domain, detection, fingerprint)
         + createScriptPreventingCanvasFingerprinting(ELEMENTS_PREVENTING_CANVAS_FINGERPRINTING, domain, detection, fingerprint);
     // Remove this script 
@@ -44,13 +44,13 @@ export default function createInjectedScript(webidentity) {
 }
 
 /**
- * Creates a script code for the prevention against object fingerprinting.
+ * Creates a script code for the prevention against fingerprinting on the standard manner.
  * @param {*} domObjects objects of web browser with properties that should be spoofed/blocked
  * @param {*} domain domain
  * @param {*} detection detection for the domain
  * @param {*} fingerprint fingerprint for domain
  */
-function createScriptPreventingObjectFingerprinting(domObjects, domain, detection, fingerprint) {
+function createScriptPreventingStandard(domObjects, domain, detection, fingerprint) {
     let script = "";
     for (let domObjectKey in domObjects) {
         let domObject = domObjects[domObjectKey];
