@@ -54,7 +54,8 @@ class Fingerprint {
         return {
             userAgent: this.ua,
             acceptEncoding: DATA.browsers[this.key[BROWSER]].http.encoding,
-            acceptLanguage: DATA.languages[this.key[LANGUAGE]]
+            acceptLanguage: DATA.languages[this.key[LANGUAGE]],
+            order: DATA.browsers[this.key[BROWSER]].http.order
         };
     }
 
