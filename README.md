@@ -19,24 +19,24 @@ Go to `about:config` (enter in address bar) and set `xpinstall.signatures.requir
 Go to `about:addons` (enter in address bar), click on the settings wheel followed by **Install Add-on From File...** and select the ZIP file created during the previous step.
 
 ## How to spoof/block a property of a web browser
-In order to spoof or to block a property of a web browser, add its information to one or two files, that to find in:
-- **constans.js** in the folder **src/utils/**
+In order to spoof or block a property of a web browser, add its information to one or two files:
+- **constants.js** in the folder **src/utils/**
 - **injectedScript.js** in the folder **src/modules/**
 
-The information are the following:
+The information to add:
 - the **name** of the property
-- **access type**: the way on which the property should be overwritten. The access types supported by FP-Block 2.0 are 'objectProperty' (<object>.<property>) and 'prototypeProperty' (<object>.<prototype>.<property>).
-- **value type**: the type of return value of a getter-method of the property. The value types supported by FP-Block 2.0 are 'string', 'number', 'array', 'storageObject', and 'object'. 
+- **access type**: the way in which the property should be overwritten. The access types supported by FP-Block 2.0 are 'objectProperty' (`<object>.<property>`) and 'prototypeProperty' (`<object>.<prototype>.<property>`).
+- **value type**: the type of return value of the properties' getter-method. The value types supported by FP-Block 2.0 are 'string', 'number', 'array', 'storageObject', and 'object'. 
 - **function names**, only for storage objects.
 
-If to spoof/block property is handled on the standard manner of **injectedScript.js**, then the information should be added only in **constants.js**, otherwise you need also improve **injectedScript.js**. There are two special cases that are separately handled:
-- preventing against canvas fingerprinting since there are no standard manner to overwrite functions in FP-Block 2.0 
-- preventing against font probing since there are limitations to called detection using a special variable to improve performance of the plug-in
+If a spoof/block property is handled in the standard manner of **injectedScript.js**, then the information should be added only in **constants.js**, otherwise you also need to adjust **injectedScript.js**. There are two special cases that are handled separately:
+- preventing against canvas fingerprinting, since there is no standard manner to overwrite functions in FP-Block 2.0
+- preventing against font probing, since there are limitations to calling detection, using a special variable to improve the performance of the plug-in
 
 ### constants.js
 1. If a property should be spoofed, add its name to SPOOF_ATTRIBUTES
-2. If the corresponding DOM-object is not exist in DOM_OBJECTS, add this object to it
-3. Add the properties's information to DOM_OBJECTS in the corresponding object like navigator and screen. 
+2. If the corresponding DOM-object does not exist in DOM_OBJECTS, add the object
+3. Add the properties' information to DOM_OBJECTS in the corresponding object like navigator or screen. 
 
-In FP-Block 2.0, the information of properties to change by preventing font detection and canvas fingerprinting have own constants.
+In FP-Block 2.0, the information of properties to change by preventing font detection and canvas fingerprinting have their own constants.
 
