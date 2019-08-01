@@ -40,3 +40,6 @@ If a spoof/block property is handled in the standard manner of **injectedScript.
 
 In FP-Block 2.0, the information of properties to change by preventing font detection and canvas fingerprinting have their own constants.
 
+## How to increase the amount of fingerprints
+The default number of fingerprints used by FP-Block 2.0 is 480480. 
+If more fingerprints are needed, the amount of combinations can be increased by uncommenting languages in `data/browser_data.js`.
