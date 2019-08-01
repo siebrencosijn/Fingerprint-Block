@@ -10,7 +10,8 @@ const BROWSER    = 0,
       TIMEZONE   = 7;
 
 class Fingerprint {
-    constructor(key, weight, fontData, canvasData) {
+    constructor(id, key, weight, fontData, canvasData) {
+        this.id = id;
         this.key = key;
         this.weight = weight;
         this.fontData = fontData;

@@ -55,11 +55,13 @@ function deleteWebidentities(params) {
     for (let domain of domains) {
         let tree = fingerprintGenerator.tree;
         let fingerprint = webIdentities.getWebIdentity(domain).fingerprint;
+        let id = fingerprint.id;
         let value = fingerprint.key;
         let weight = fingerprint.weight;
         detections.deleteDetection(domain);
         webIdentities.removeWebIdentity(domain);
-        tree.insert(value, weight);
+        fingerprintGenerator.free(id);
+        tree.insert(id, value, weight);
     }
 }
 

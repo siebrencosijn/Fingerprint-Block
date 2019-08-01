@@ -24,7 +24,7 @@ let webIdentities = {
      * Save web identity to database.
      */
     save(webidentity) {
-        db.put(webidentity, db.DB_STORE_WEBIDENTITIES);
+        db.insert(webidentity, db.DB_STORE_WEBIDENTITIES);
     },
 
     /*

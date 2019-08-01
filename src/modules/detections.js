@@ -22,7 +22,7 @@ let detections = {
      * Save detection to database.
      */
     save(detection) {
-        db.put(detection, db.DB_STORE_DETECTIONS);
+        db.insert(detection, db.DB_STORE_DETECTIONS);
     },
 
     /**

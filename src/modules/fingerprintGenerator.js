@@ -11,17 +11,21 @@ let fingerprintGenerator = {
      * or call initialize if this is the first run.
      */
     load() {
-        db.get(db.DB_STORE_TREE, (result) => {
-            if (result.length > 0) {
-                this.tree = result;
-            } else {
-                this.init();
-            }
+        db.get(db.DB_STORE_FINGERPRINTS, (result) => {
+            let used = [];
+            result.forEach(fp => {
+                used.push(fp.id);
+            });
+            this.init(used);
         });
     },
 
-    save() {
-        db.add(this.tree.tree, db.DB_STORE_TREE);
+    use(id) {
+        db.insert({id: id}, db.DB_STORE_FINGERPRINTS);
+    },
+
+    free(id) {
+        db.remove(id, db.DB_STORE_FINGERPRINTS);
     },
 
     /**
@@ -37,22 +41,24 @@ let fingerprintGenerator = {
         }
         let fontData = {defaultWidth: 64, defaultHeight: 100};
         let canvasData = { data: null };
-        return new Fingerprint(r.value, r.weight, fontData, canvasData);
+        this.use(r.id);
+        return new Fingerprint(r.id, r.value, r.weight, fontData, canvasData);
     },
 
     /**
      * Initialize the data needed to generate fingerprints.
      */
-    init() {
+    init(used) {
         let fps = [];
         this._init_browser_attr(fps);
         let h = Math.ceil(Math.log2(fps.length + 1)) - 1;
         let s = Math.pow(2, h + 1) - 1;
         this.tree = new Tree(s);
-        for (let fp of fps) {
-            this.tree.insert(fp.id, fp.w);
+        for (let i = 0; i < fps.length; i++) {
+            if (!used.includes(i)) {
+                this.tree.insert(i, fps[i].v, fps[i].w);
+            }
         }
-        //this.save();
     },
 
     _init_browser_attr(fps) {
@@ -82,7 +88,7 @@ let fingerprintGenerator = {
             for (let i6 = 0; i6 < DATA.languages.length; i6++) {
                 for (let i7 = 0; i7 < DATA.timezones.length; i7++) {
                     fps.push({
-                        id: [i0, i1, i2, i3, i4, i5, i6, i7],
+                        v: [i0, i1, i2, i3, i4, i5, i6, i7],
                         w: w * DATA.screen.resolutions[i5].weight
                     });
                 }

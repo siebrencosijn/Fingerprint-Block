@@ -8,10 +8,12 @@ const RIGHT  = i => 2 * i + 2;
 class TreeNode {
     /**
      * Create a node.
+     * @param {number} id - Identifier of the node.
      * @param {*} value - Value of the node.
      * @param {number} weight - Weight of the node.
      */
-    constructor(value, weight) {
+    constructor(id, value, weight) {
+        this.id = id;
         this.value = value;
         this.weight = weight;
         this.sum = weight;
@@ -115,11 +117,12 @@ class Tree {
 
     /**
      * Insert a new node into the tree.
+     * @param {number} id - Identifier of the node.
      * @param {*} value - Value of the node.
      * @param {number} weight - Weight of the node.
      */
-    insert(value, weight) {
-        let node = new TreeNode(value, weight);
+    insert(id, value, weight) {
+        let node = new TreeNode(id, value, weight);
         let index = 0;
         let current = this.tree[index];
         while (current !== null) {
@@ -177,7 +180,11 @@ class Tree {
             if (leftSum < r) {
                 r -= leftSum;
                 if (r < current.weight) {
-                    let ret = {value: current.value, weight: current.weight};
+                    let ret = {
+                        id: current.id,
+                        value: current.value,
+                        weight: current.weight
+                    };
                     this.delete(index);
                     return ret;
                 } else {

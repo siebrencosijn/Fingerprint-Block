@@ -64,21 +64,21 @@ function changeRequestHeaders(headers, webidentity) {
         }
     }
     // sort headers based on order
-    let order = http.order.map(h => h.toLowerCase());
-    headers.sort((h1, h2) => {
-        let h1_index = order.indexOf(h1.name.toLowerCase());
-        let h2_index = order.indexOf(h2.name.toLowerCase());
-        if (h1_index < 0 && h2_index < 0) {
-            return 0;
-        }
-        if (h1_index < 0) {
-            return 1;
-        }
-        if (h2_index < 0) {
-            return -1;
-        }
-        return h1_index - h2_index;
-    });
+    // let order = http.order.map(h => h.toLowerCase());
+    // headers.sort((h1, h2) => {
+    //     let h1_index = order.indexOf(h1.name.toLowerCase());
+    //     let h2_index = order.indexOf(h2.name.toLowerCase());
+    //     if (h1_index < 0 && h2_index < 0) {
+    //         return 0;
+    //     }
+    //     if (h1_index < 0) {
+    //         return 1;
+    //     }
+    //     if (h2_index < 0) {
+    //         return -1;
+    //     }
+    //     return h1_index - h2_index;
+    // });
 }
 
 /*

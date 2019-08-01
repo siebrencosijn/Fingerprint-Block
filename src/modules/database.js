@@ -3,7 +3,7 @@ let db = {
 
     upgrade(e) {
         let _db = e.target.result;
-        let store1 = _db.createObjectStore(db.DB_STORE_TREE, {autoIncrement: true});
+        let store1 = _db.createObjectStore(db.DB_STORE_FINGERPRINTS, {keyPath: "id"});
         let store2 = _db.createObjectStore(db.DB_STORE_WEBIDENTITIES, {keyPath: "domain"});
         let store3 = _db.createObjectStore(db.DB_STORE_DETECTIONS, {keyPath: "domain"});
     },
@@ -38,32 +38,23 @@ let db = {
         });
     },
 
-    add(items, store_name) {
-        db.open(() => {
-            let store = db.getObjectStore(store_name, db.RW);
-            items.forEach(item => {
-                store.add(item);
-            });
-        });
-    },
-
-    put(item, store_name) {
+    insert(item, store_name) {
         db.open(() => {
             let store = db.getObjectStore(store_name, db.RW);
             store.put(item);
         });
     },
 
-    remove(item, store_name) {
+    remove(key, store_name) {
         db.open(() => {
             let store = db.getObjectStore(store_name, db.RW);
-            store.delete(item);
+            store.delete(key);
         });
     },
 
     clear() {
         db.open(() => {
-            db.getObjectStore(db.DB_STORE_TREE, db.RW).clear();
+            db.getObjectStore(db.DB_STORE_FINGERPRINTS, db.RW).clear();
             db.getObjectStore(db.DB_STORE_WEBIDENTITIES, db.RW).clear();
             db.getObjectStore(db.DB_STORE_DETECTIONS, db.RW).clear();
         });
@@ -75,8 +66,8 @@ Object.defineProperty(db, "DB_NAME", {
     writable: false
 });
 
-Object.defineProperty(db, "DB_STORE_TREE", {
-    value: "tree",
+Object.defineProperty(db, "DB_STORE_FINGERPRINTS", {
+    value: "fingerprints",
     writable: false
 });
 
